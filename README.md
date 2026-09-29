@@ -34,6 +34,12 @@ npm run test:e2e     # builds, then plays every fighter in headless Chromium (Pl
 
 Useful URL parameter: `?char=blaze|volt|titan|shadow` skips the selection screen.
 
+### Debug and test hooks
+
+`window.__game` (see `GameManager.debugApi()`) exposes helpers used by the automated tests, which you can also call from the browser console: `start('volt')`, `spawn('heavy', 8)`, `cast(2)`, `fillUlt()`, `freeCast(true)` (no cooldowns), `godMode(true)`, `stopWaves()`, `advance(seconds)` (deterministic 60 Hz simulation), `setLoop(false)` / `renderOnce()`, and `stats()` (fps, draw calls, particle count).
+
+Extra capture tools in `scripts/` (need `npm run dev` running): `play.mjs <char>` casts every ability and saves screenshots, `bot.mjs <char> [seconds]` plays live waves with a scripted bot and prints combat statistics, `ui-shots.mjs` captures the menus, and `poses.mjs` renders animation poses.
+
 ## Controls
 
 All bindings can be changed in-game (**Esc → Controls**) and are saved to local storage. Defaults live in `src/config/controls.ts`.

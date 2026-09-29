@@ -27,6 +27,17 @@ export class InputManager {
     window.addEventListener('keyup', this.onKeyUp);
     window.addEventListener('blur', () => this.down.clear());
     element.addEventListener('mousedown', this.onMouseDown);
+    // While rebinding, mouse buttons anywhere on the page (menus cover the canvas) are captured.
+    window.addEventListener(
+      'mousedown',
+      (e) => {
+        if (!this.captureCb) return;
+        e.preventDefault();
+        e.stopPropagation();
+        this.handlePress(`Mouse${e.button}`);
+      },
+      true,
+    );
     window.addEventListener('mouseup', this.onMouseUp);
     window.addEventListener('mousemove', this.onMouseMove);
     element.addEventListener('wheel', this.onWheel, { passive: false });

@@ -452,7 +452,9 @@ const infernoPunch: AbilityDef = {
   cast(c) {
     const a = c.caster;
     const w = c.world;
-    c.faceAim(7);
+    const target = c.findTarget(9, 80);
+    c.faceAim(9);
+    let lungeSpeed = 14;
     c.anim('infernoPunch', { duration: 0.85 });
     c.superArmor(0, 0.65);
     c.at(0, () => w.audio.play('charge_up', a.position, { pitch: 1.4, volume: 0.7 }));
@@ -461,9 +463,18 @@ const infernoPunch: AbilityDef = {
       w.vfx.emit('flame', p, 2 + k * 4, { speed: [0.5, 2], life: [0.15, 0.35], size: [0.3 + k * 0.6, 0.6 + k * 0.9], sizeEnd: 0.2, color: FireFX.colors, colorEnd: 0x901800, jitter: 0.1 + k * 0.1 });
       w.vfx.emit('glow', p, 1, { speed: 0.1, life: 0.15, size: 0.8 + k * 1.2, sizeEnd: 0.5, color: 0xffa040 });
     });
+    c.at(0.43, () => {
+      // Step into the punch: close the gap to the target (up to ~6 m).
+      if (target?.alive) {
+        a.faceTowards(target.position);
+        const gap = a.position.distanceTo(target.position) - target.radius - 1.6;
+        lungeSpeed = Math.max(4, Math.min(6, gap) / 0.12);
+      }
+    });
     c.during(0.44, 0.56, () => {
       const f = a.forward();
-      a.velocity.set(f.x * 14, a.velocity.y, f.z * 14);
+      a.velocity.set(f.x * lungeSpeed, a.velocity.y, f.z * lungeSpeed);
+      if (lungeSpeed > 20) w.vfx.afterimage(a, 0xff6a20, 0.2, 0.3);
     });
     c.at(0.48, () => {
       const f = a.forward();

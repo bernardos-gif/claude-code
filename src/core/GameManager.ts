@@ -452,9 +452,10 @@ export class GameManager {
       select: () => this.showSelect(),
       player: () => this.world.player,
       state: () => this.state,
+      /** Tap an action (press + release; the press stays buffered for the controller). */
       press: (action: Parameters<InputManager['simulatePress']>[0]) => {
         this.input.simulatePress(action);
-        setTimeout(() => this.input.simulateRelease(action), 60);
+        this.input.simulateRelease(action);
       },
       hold: (action: Parameters<InputManager['simulatePress']>[0], down: boolean) => (down ? this.input.simulatePress(action) : this.input.simulateRelease(action)),
       cast: (slot: number) => this.world.player?.abilities?.tryCast(slot, this.world),

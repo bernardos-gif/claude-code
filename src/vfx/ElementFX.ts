@@ -292,7 +292,7 @@ export const ShadowFX = {
   colors: [0xb05cff, 0x7a2cff, 0xe0a0ff],
 
   puff(vfx: VFXManager, pos: THREE.Vector3, scale = 1): void {
-    vfx.emit('dark', pos, 16 * scale, { speed: [1, 3.5 * scale], life: [0.5, 1], size: [0.9 * scale, 1.6 * scale], sizeEnd: 1.8, color: [0x140a1e, 0x1e0c2c, 0x0a0610], alpha: 0.85, drag: 2.5, gravity: -0.6, jitter: 0.3 * scale, jitterY: 0.6 * scale });
+    vfx.emit('dark', pos, 16 * scale, { speed: [1, 3.5 * scale], life: [0.5, 1], size: [0.9 * scale, 1.6 * scale], sizeEnd: 1.8, color: [0x1e1030, 0x2a1440, 0x140a20], alpha: 0.6, drag: 2.5, gravity: -0.6, jitter: 0.3 * scale, jitterY: 0.6 * scale });
     vfx.emit('glow', pos, 10 * scale, { speed: [2, 5 * scale], life: [0.25, 0.5], size: [0.3, 0.6], sizeEnd: 0.1, color: this.colors, colorEnd: 0x3a0080, drag: 3, jitterY: 0.6 });
     vfx.emit('spark', pos, 6 * scale, { speed: [3, 7], life: [0.2, 0.45], size: [0.15, 0.25], color: 0xd9a0ff, colorEnd: 0x5a00c0, drag: 2 });
   },

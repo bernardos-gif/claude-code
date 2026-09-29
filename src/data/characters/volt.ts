@@ -410,14 +410,27 @@ const thunderPunch: AbilityDef = {
   cast(c) {
     const a = c.caster;
     const w = c.world;
-    const d = c.faceAim(8);
+    // Gap closer: rockets toward the target (up to ~8 m) and strikes on arrival.
+    const target = c.findTarget(10, 80);
+    let d = c.faceAim(10);
+    let struck = false;
     c.anim('thunderPunch', { duration: 0.55 });
     c.at(0, () => w.audio.play('zap_swing', a.position, { pitch: 0.8 }));
-    c.during(0, 0.16, () => {
-      a.velocity.set(d.x * 22, a.velocity.y, d.z * 22);
+    c.during(0, 0.3, (dt, local) => {
+      if (struck) return;
+      if (target?.alive) {
+        const to = target.position.clone().sub(a.position).setY(0);
+        if (to.length() < 1.5 + target.radius || local > 0.28) return strike();
+        d = to.normalize();
+        a.facing = yawFromDir(d.x, d.z);
+      } else if (local > 0.16) return strike();
+      a.velocity.set(d.x * 28, a.velocity.y, d.z * 28);
       w.vfx.emit('spark', a.socketPos('handR'), 2, { speed: [1, 4], life: 0.2, size: 0.2, color: LightningFX.colors });
+      if (local > 0.04) w.vfx.afterimage(a, WHITE_BLUE, 0.2, 0.35);
     });
-    c.at(0.16, () => {
+    const strike = () => {
+      if (struck) return;
+      struck = true;
       c.stop();
       const f = a.forward();
       for (const t of w.combat.queryArc(a, 2.6, 80)) {
@@ -433,8 +446,9 @@ const thunderPunch: AbilityDef = {
       w.vfx.flash(p, 0x6fc8ff, 30, 12, 0.2);
       w.audio.play('zap_heavy', p);
       w.arena.damageInSphere(p, 1.5, 150, f);
-    });
-    c.end(0.5);
+    };
+    c.at(0.3, strike);
+    c.end(0.6);
   },
 };
 

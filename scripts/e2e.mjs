@@ -8,8 +8,16 @@
 import { chromium } from 'playwright';
 import { spawn } from 'child_process';
 import fs from 'fs';
+import net from 'net';
 
-const PORT = 4179;
+// Pick a free port so stale servers never break the run.
+const PORT = await new Promise((resolve) => {
+  const srv = net.createServer();
+  srv.listen(0, () => {
+    const { port } = srv.address();
+    srv.close(() => resolve(port));
+  });
+});
 const URL = `http://localhost:${PORT}/`;
 const shots = process.env.E2E_SHOTS ?? 'screenshots/e2e';
 fs.mkdirSync(shots, { recursive: true });
@@ -17,6 +25,7 @@ fs.mkdirSync(shots, { recursive: true });
 const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: ['ignore', 'pipe', 'pipe'] });
 await new Promise((resolve, reject) => {
   const t = setTimeout(() => reject(new Error('preview server did not start')), 20000);
+  server.stderr.on('data', (d) => process.stderr.write(d));
   server.stdout.on('data', (d) => {
     if (String(d).includes(String(PORT))) {
       clearTimeout(t);
@@ -26,6 +35,14 @@ await new Promise((resolve, reject) => {
 });
 
 let failures = 0;
+// Screenshots are informational: software WebGL can be slow, so never fail on them.
+const snap = async (page, path) => {
+  try {
+    await page.screenshot({ path, timeout: 60000 });
+  } catch (e) {
+    console.log(`  (screenshot skipped: ${e.message.split('\n')[0]})`);
+  }
+};
 const check = (cond, msg) => {
   console.log(`${cond ? '  ✔' : '  ✘'} ${msg}`);
   if (!cond) failures++;
@@ -58,7 +75,7 @@ try {
   await page.locator('.info .ab').nth(4).click();
   await page.waitForTimeout(300);
   check((await page.locator('.ab-detail b').textContent())?.length > 0, 'ability preview details');
-  await page.screenshot({ path: `${shots}/select.png` });
+  await snap(page, `${shots}/select.png`);
 
   const ids = await g(() => window.__game.gm.selection && ['blaze', 'volt', 'titan', 'shadow']);
   for (const id of ids) {
@@ -77,16 +94,20 @@ try {
       G.spawn('heavy', 9, 0.9);
       G.advance(1.3);
     });
-    for (let i = 0; i < 8; i++) await g(() => { window.__game.press('attack'); window.__game.advance(0.22); });
+    for (let i = 0; i < 8; i++) await g(() => { window.__game.press('attack'); window.__game.advance(0.25); });
     const combo = await g(() => window.__game.world.combat.maxCombo);
     check(combo >= 3, `basic combo connects (max combo ${combo})`);
     for (let s = 0; s < 6; s++) {
       await g(() => {
         const G = window.__game;
-        if (G.world.aliveEnemies().length < 3) {
+        G.advance(0.7); // let the previous action finish
+        const p = G.player();
+        const near = G.world.aliveEnemies().filter((e) => e.position.distanceTo(p.position) < 10 && e.grounded);
+        if (near.length < 3) {
+          G.gm.camera.yaw = p.facing;
           G.spawn('fighter', 5, 0.2);
           G.spawn('fighter', 6, -0.3);
-          G.spawn('ranged', 11, 0.1);
+          G.spawn('ranged', 9, 0.1);
           G.advance(1.2);
         }
       });
@@ -100,9 +121,9 @@ try {
       check(ok, `cast ${name}`);
       if (!buffOnly) check(after > before, `${name} dealt damage (${Math.round(after - before)})`);
     }
-    await g(() => { window.__game.advance(0.5); window.__game.renderOnce(); });
-    await page.screenshot({ path: `${shots}/${id}.png` });
-    await g(() => window.__game.setLoop(true));
+    await g(() => { window.__game.advance(0.5); window.__game.setLoop(true); });
+    await page.waitForTimeout(1500);
+    await snap(page, `${shots}/${id}.png`);
     const kills = await g(() => window.__game.world.combat.kills);
     check(kills > 0, `enemies defeated (${kills})`);
   }
@@ -130,7 +151,7 @@ try {
   await page.waitForTimeout(500);
   check((await g(() => window.__game.state())) === 'gameover', 'game over after death');
   check((await page.locator('.gameover').count()) === 1, 'game over screen');
-  await page.screenshot({ path: `${shots}/gameover.png` });
+  await snap(page, `${shots}/gameover.png`);
   await page.locator('.gameover .btn.primary').click();
   await page.waitForTimeout(300);
   check((await g(() => window.__game.state())) === 'playing', 'retry restarts the match');
