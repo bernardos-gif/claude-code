@@ -1,0 +1,68 @@
+name: Mac app
+
+# Builds Elemental Clash as a universal macOS app (Apple Silicon + Intel),
+# launches it on a real Mac to smoke-test it, and uploads a .dmg installer.
+on:
+  push:
+    branches: [main, 'claude/**']
+    paths-ignore: ['README.md']
+  workflow_dispatch:
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build game
+        run: npm run build
+
+      - name: Package universal .app
+        run: npx electron-builder --mac --universal --publish never
+
+      - name: Sign (ad-hoc) and verify
+        run: |
+          APP="release/mac-universal/Elemental Clash.app"
+          xattr -cr "$APP"
+          codesign --force --deep --sign - "$APP"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          lipo -archs "$APP/Contents/MacOS/Elemental Clash"
+
+      - name: Smoke test the packaged app on macOS
+        run: |
+          SMOKE_SCREENSHOT="$PWD/mac-smoke.png" "release/mac-universal/Elemental Clash.app/Contents/MacOS/Elemental Clash" --smoke-test
+
+      - name: Create .dmg
+        run: |
+          mkdir -p dmg
+          cp -R "release/mac-universal/Elemental Clash.app" dmg/
+          ln -s /Applications dmg/Applications
+          hdiutil create -volname "Elemental Clash" -srcfolder dmg -ov -format UDZO Elemental-Clash-mac.dmg
+          ls -lh Elemental-Clash-mac.dmg
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Elemental-Clash-mac
+          path: Elemental-Clash-mac.dmg
+          retention-days: 30
+
+      - name: Upload smoke-test screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-smoke-screenshot
+          path: mac-smoke.png
+          if-no-files-found: ignore
