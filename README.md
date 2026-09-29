@@ -1,0 +1,173 @@
+# Elemental Clash
+
+A fast-paced 3D third-person arena fighting game built with **Three.js + TypeScript + Vite**.
+Pick one of four elemental fighters (each with a unique combat style, animations, VFX, stats, passive and six abilities) and survive endless waves of enemies in a large ruined arena.
+
+Everything is procedural: models, animations, textures, icons, portraits, sound effects and music are generated in code, so the game has **no external asset files**. The architecture is set up so real assets can replace the placeholders later (see *Replacing placeholder assets*).
+
+---
+
+## How to run
+
+Requirements: Node.js 18+ and a browser with WebGL 2 (Chrome, Edge, Firefox, Safari 16+).
+
+```bash
+npm install
+npm run dev          # http://localhost:5173
+```
+
+Production build:
+
+```bash
+npm run build        # type-checks, then bundles to dist/
+npm run preview      # serves dist/ on http://localhost:4173
+```
+
+Tests:
+
+```bash
+npm test             # unit + data-integrity tests (Vitest)
+npm run test:e2e     # builds, then plays every fighter in headless Chromium (Playwright)
+```
+
+`test:e2e` uses Playwright's Chromium. If it is not installed on your machine, run `npx playwright install chromium` once.
+
+Useful URL parameter: `?char=blaze|volt|titan|shadow` skips the selection screen.
+
+### Debug and test hooks
+
+`window.__game` (see `GameManager.debugApi()`) exposes helpers used by the automated tests, which you can also call from the browser console: `start('volt')`, `spawn('heavy', 8)`, `cast(2)`, `fillUlt()`, `freeCast(true)` (no cooldowns), `godMode(true)`, `stopWaves()`, `advance(seconds)` (deterministic 60 Hz simulation), `setLoop(false)` / `renderOnce()`, and `stats()` (fps, draw calls, particle count).
+
+Extra capture tools in `scripts/` (need `npm run dev` running): `play.mjs <char>` casts every ability and saves screenshots, `bot.mjs <char> [seconds]` plays live waves with a scripted bot and prints combat statistics, `ui-shots.mjs` captures the menus, and `poses.mjs` renders animation poses.
+
+## Controls
+
+All bindings can be changed in-game (**Esc → Controls**) and are saved to local storage. Defaults live in `src/config/controls.ts`.
+
+| Action | Default |
+| --- | --- |
+| Move | **W A S D** (arrow keys also work) |
+| Camera | **Mouse** (click the game to capture the pointer), mouse wheel zooms |
+| Basic attack / combo | **Left mouse button** (tap repeatedly to chain the combo; attack in the air for an aerial attack) |
+| Jump | **Space** (Volt and Shadow can double-jump) |
+| Dodge (invulnerability frames) | **Shift** |
+| Ability 1 / 2 / 3 / 4 / 5 | **Q / E / R / F / Z** |
+| Ultimate (when the meter is full) | **X** |
+| Lock / cycle target | **Tab** or **right mouse button** |
+| Walk | **Left Ctrl** (hold) |
+| Pause, settings, rebinding | **Esc** or **P** |
+| Controls overlay | **H** |
+| Mute | **M** |
+
+## The fighters
+
+| | Blaze | Volt | Titan | Shadow |
+| --- | --- | --- | --- | --- |
+| Role | Fire brawler | Lightning speedster | Earth juggernaut | Void assassin |
+| Health | 900 | 750 | 1600 | 700 |
+| Move speed | 10 | 13.5 | 6.5 | 11.5 |
+| Attack damage | 34 | 18 | 60 | 24 |
+| Defense | 15 | 20 | 80 | 10 |
+| Attack speed | 1.15× | 1.6× | 0.7× | 1.35× |
+| Dodge distance | 7 m | 10 m | 4.5 m | 9 m |
+| Ability damage | 125% | 90% | 130% | 110% |
+| Cooldown speed | base | +43% | −20% | +11% |
+| Crit chance | 12% | 10% | 5% | 30% (250% crits) |
+| Combo | 4-hit boxing chain, flaming uppercut launcher | 6-hit blur of palms and kicks | 3 slow super-armored haymakers, last one makes a shockwave | 5 blade slashes with spins and a cross-cut |
+| Passive | **Kindling**: basic attacks stack Burn; +15% vs burning, +20% below 35% HP | **Overload**: every hit adds Static, 4 stacks = stun + chain arcs; double jump | **Unstoppable**: super armor on attacks, can’t be staggered by normal hits, landing shockwave | **Assassin’s Mark**: hits from behind always crit; ambush from stealth / Shadow Step deals double damage; double jump |
+
+**Blaze — The Living Inferno**: Flame Dash (dash leaving a burning trail) · Inferno Punch (charged haymaker that sends enemies flying) · Fireball Barrage (5 homing, exploding fireballs) · Flame Tornado (roaming tornado that pulls enemies in) · Meteor Crash (leap and crash down in a fiery explosion) · **World Burner** (colossal explosion, the arena floor becomes a sea of fire, orange sky, cinematic camera).
+
+**Volt — The Living Storm**: Lightning Step (instant teleport with afterimage, 2 charges) · Thunder Punch (dashing stun punch) · Chain Lightning (bounces between up to 6 enemies) · Static Field (dome that slows and shocks) · Thunder Spear (charged, very fast single-target spear) · **Storm God** (9 s of lightning striking every enemy in the arena while Volt gets +50% speed, +40% attack speed and double cooldown rate).
+
+**Titan — The Walking Mountain**: Earthquake (shockwave rolling across the arena) · Rock Throw (rips a boulder out of the ground and lobs it) · Titan Charge (unstoppable bulldozer run, smashes props) · Iron Skin (−70% damage taken, rock armour appears on the body) · Ground Breaker (five fissures that erupt in stone spikes and launch enemies) · **Colossus** (grows to 2.2× size with more reach, damage and resistance; every footstep crushes enemies and flattens pillars, statues and crates).
+
+**Shadow — The Unseen Blade**: Shadow Step (teleport behind the target, next hit guaranteed crit) · Dark Blades (fan of piercing void blades) · Smoke Vanish (smoke cloud + stealth, enemies lose track) · Shadow Clone (two decoy clones that fight) · Execution (six-strike teleport flurry that executes targets below 35% HP) · **Realm of Shadows** (pulls nearby enemies into a dark alternate arena, Shadow gets +80% speed with four clones, finishing in a slow-motion cinematic assassination).
+
+### Enemies
+
+* **Ravager** (fighter): sword and buckler, chases, circles and uses slashes / lunges; only three melee enemies attack at once.
+* **Hexcaster** (ranged): keeps its distance, strafes, shoots homing hex bolts and volleys, uses a knock-back when cornered, dodges projectiles.
+* **Juggernaut** (heavy): huge health and poise, hammer swings, telegraphed ground slams and a rampaging charge.
+
+Enemy tactics adapt to the chosen fighter. Base tactics are adjusted by the fighter's `ThreatProfile` (so any future character works automatically) and then by explicit per-character overrides (`vsCharacter` in `src/data/enemies/index.ts`). For example, Hexcasters kite slow Titan from 20 m away but panic and fail to escape Volt, Ravagers bait Titan's slow swings and turn faster to protect their backs from Shadow, everyone steers around Blaze's burning ground and Volt's static field, and Juggernauts favour area slams against fast fighters.
+
+## Project structure
+
+```
+src/
+  main.ts                         entry point
+  core/
+    GameManager.ts                renderer, main loop, state machine (select → playing ⇄ paused → game over)
+    World.ts                      shared simulation state / service locator, hit-stop, slow motion
+    WaveManager.ts                endless escalating waves through the arena portals
+    InputManager.ts               keyboard/mouse capture, buffered actions, pointer lock
+    EventBus.ts, math.ts          utilities
+  config/controls.ts              configurable bindings + settings persistence
+  data/
+    types.ts                      CharacterDefinition, AbilityDef, AttackStep, EnemyDefinition, stats...
+    characters/                   blaze.ts, volt.ts, titan.ts, shadow.ts (+ kit.ts helpers, index.ts roster)
+    enemies/index.ts              Ravager, Hexcaster, Juggernaut
+  characters/
+    Rig.ts                        procedural humanoid builder (joints + primitive meshes, sockets)
+    AnimationClip.ts              pose data model, keyframe/procedural clips, gait/idle/flip generators
+    AnimationController.ts        cross-fading animator (IAnimator interface), flinch spring, lean
+  entities/
+    Actor.ts                      shared fighter/enemy entity: state machine, dodge, jump, hit reactions, death
+    CharacterController.ts        kinematic physics: acceleration, gravity, step-up, collisions
+    PlayerController.ts           input → movement, combos, dodge, abilities, soft/locked targeting
+    EnemyAI.ts                    enemy brain with character-aware tactics
+    CloneAI.ts                    summoned allies (Shadow clones)
+  combat/
+    CombatSystem.ts               damage formula, crits, knockback, hit-stop, combo counter, hit queries
+    AbilitySystem.ts              cooldowns, charges, ultimate meter, declarative ability timelines
+    MeleeRunner.ts                attack steps: lunge, aim assist, swing trails, hitboxes
+    HealthSystem.ts               health pools
+    StatusEffects.ts, Effects.ts  buffs/debuffs (burn, stun, slow, stealth, armor...)
+    ProjectileSystem.ts           swept projectiles with homing, gravity, pierce
+    ZoneSystem.ts                 persistent areas (burning ground, tornado, static field, smoke)
+  vfx/
+    VFXManager.ts                 particle layers, rings, lightning, trails, afterimages, decals, debris, flash lights
+    Particles.ts                  GPU point-sprite particle pools
+    ElementFX.ts                  fire / lightning / earth / shadow effect recipes and shaders
+    Textures.ts                   procedural canvas textures
+  audio/AudioManager.ts           procedural WebAudio SFX recipes + adaptive music
+  camera/CameraController.ts      third-person orbit camera, collision, shake, FOV kicks, cinematics
+  world/Arena.ts, Lighting.ts     arena geometry, colliders, destructibles, sky, lighting moods
+  ui/
+    CharacterSelection.ts         3D showcase selection screen
+    UIManager.ts                  HUD, enemy bars, damage numbers, menus, rebinding, game over
+    Icons.ts, PortraitRenderer.ts procedural ability icons and 3D-rendered portraits
+tests/                            Vitest unit + data-integrity tests
+scripts/                          e2e.mjs (Playwright), play.mjs / shot.mjs / poses.mjs (debug capture tools)
+```
+
+## Adding a fifth character
+
+1. **Create `src/data/characters/<id>.ts`** exporting a `CharacterDefinition` (copy one of the existing files as a template):
+   * `stats`: health, speed, damage, defense, attack speed, dodge, ability power, cooldown multiplier, crit, jump, poise, mass, scale...
+   * `buildModel()`: use `RigBuilder` with body proportions and colours, then `attach()` accessories to bones or sockets.
+   * `animations`: must include `idle, walk, run, jump, fall, land, dodge, hit, knockback, getup, death` plus every clip your combo and abilities play. Use `idleClip`, `gaitClip`, `flipClip` for locomotion and `clip(duration, keys)` for keyframed moves.
+   * `combo`: a list of `AttackStep`s (animation, duration, hit frames with range/arc/damage/knockback/stagger, lunge, cancel window, swing trails) plus an air attack.
+   * `abilities`: exactly six `AbilityDef`s, the last with `ultimate: true`. Each `cast(c)` builds a timeline with `c.at(t, fn)`, `c.during(t0, t1, fn)`, `c.every(...)`, `c.superArmor(...)`, `c.invulnerable(...)`, `c.end(t)`, and uses the world services (`c.world.combat`, `projectiles`, `zones`, `vfx`, `audio`, `camera`, `lighting`, `ui`).
+   * `hooks` (passive logic), `vfx`, `sounds`, `threat` (how enemies perceive it), `camera`, `theme`, `portrait`, `ratings`.
+2. **Register it** in `src/data/characters/index.ts` (`CHARACTERS` array).
+3. Optionally add per-character enemy tactics in `vsCharacter` of each enemy (`src/data/enemies/index.ts`). Without them the AI still adapts through the `threat` profile.
+4. New sound effects: `AudioManager.register('my_sound', (synth, t, p) => { ... })`.
+5. Run `npm test`. The data-integrity tests verify the new fighter has six abilities, all required clips, that every clip and sound it references exists, and that every enemy has tactics for it.
+
+The selection screen, HUD (portrait, colours, icons, key labels, cooldowns), targeting, combat, AI and wave systems pick the new character up automatically.
+
+## Replacing placeholder assets
+
+* **Models and animations**: gameplay only talks to `Actor.anim`, which implements `IAnimator` (`play(name, opts)`, `update`, `clipDuration`...). To use skinned glTF characters, write an animator that wraps `THREE.AnimationMixer` and maps the same clip names, return the loaded scene from `buildModel()`, and keep the socket names (`handL`, `handR`, `head`, `weapon`...) as bone or empty-node names.
+* **Sounds**: `AudioManager.play(id)` can be backed by audio buffers instead of synth recipes. Keep the ids.
+* **Textures**: `vfx/Textures.ts` returns `THREE.Texture`s. Swap any of them for loaded images.
+
+## Remaining limitations
+
+* All art is procedural: primitive-built characters and keyframed procedural animation rather than skinned meshes and motion capture.
+* Single player only; there is no PvP or local versus mode.
+* Enemy navigation is steering-based (no navmesh). Enemies can get briefly stuck behind large ruins.
+* The browser needs a user click before audio can play (autoplay policy); the game unlocks audio on the first click.
+* Performance targets a desktop GPU. The game detects software rendering and falls back to *Low* quality, and quality can be changed in **Esc → Settings**.
