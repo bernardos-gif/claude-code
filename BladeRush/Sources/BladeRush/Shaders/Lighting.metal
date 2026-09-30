@@ -12,7 +12,7 @@ kernel void cull_lights(constant FrameUniforms& U [[buffer(0)]],
     threadgroup atomic_uint minDepthBits;
     threadgroup atomic_uint maxDepthBits;
     threadgroup atomic_uint visibleCount;
-    threadgroup uint visible[MAX_LIGHTS_PER_TILE];
+    threadgroup uint visibleList[MAX_LIGHTS_PER_TILE];
 
     if (lid == 0) {
         atomic_store_explicit(&minDepthBits, as_type<uint>(1e9f), memory_order_relaxed);
@@ -59,7 +59,7 @@ kernel void cull_lights(constant FrameUniforms& U [[buffer(0)]],
             if (depth + r < minD || depth - r > maxD) continue;
             if (dot(nL, vp) < -r || dot(nR, vp) < -r || dot(nB, vp) < -r || dot(nT, vp) < -r) continue;
             uint slot = atomic_fetch_add_explicit(&visibleCount, 1u, memory_order_relaxed);
-            if (slot < MAX_LIGHTS_PER_TILE) visible[slot] = i;
+            if (slot < MAX_LIGHTS_PER_TILE) visibleList[slot] = i;
         }
     }
     threadgroup_barrier(mem_flags::mem_threadgroup);
@@ -69,6 +69,6 @@ kernel void cull_lights(constant FrameUniforms& U [[buffer(0)]],
     uint count = min(atomic_load_explicit(&visibleCount, memory_order_relaxed), uint(MAX_LIGHTS_PER_TILE));
     if (lid == 0) tiles[base] = count;
     for (uint i = lid; i < count; i += TILE_SIZE * TILE_SIZE) {
-        tiles[base + 1 + i] = visible[i];
+        tiles[base + 1 + i] = visibleList[i];
     }
 }

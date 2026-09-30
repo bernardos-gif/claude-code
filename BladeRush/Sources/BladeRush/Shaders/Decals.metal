@@ -92,9 +92,9 @@ fragment float4 fs_decal(DecalOut in [[stage_in]],
     } else if (kind < 3.5) {
         // Frost patch.
         float n = valueNoise(p * 8.0 + seed * 5.0);
-        float patch = 1.0 - smoothstep(0.5, 1.0, dist + n * 0.25);
+        float frostPatch = 1.0 - smoothstep(0.5, 1.0, dist + n * 0.25);
         float sparkle = step(0.97, hash12(floor(wp.xz * 40.0)));
-        a = patch * 0.75 * fade;
+        a = frostPatch * 0.75 * fade;
         rgb = (float3(0.75, 0.88, 1.0) * lit + dc.color.rgb * sparkle * 2.0) * a;
     } else if (kind < 4.5) {
         // Glowing glyph circle (boss sigils, hazards).

@@ -61,6 +61,7 @@ final class Renderer {
     private var prevViewProjNoJitter = Mat4.identity
     private var mfxScaler: MTLFXTemporalScaler?
     private var mfxKey = ""
+    private var mfxUnavailable = false
     private var screenshotPending = false
     var onScreenshot: ((URL?) -> Void)?
 
@@ -308,7 +309,7 @@ final class Renderer {
 
         // Sizes.
         let outW = max(1, Int(view.drawableSize.width)), outH = max(1, Int(view.drawableSize.height))
-        let wantMFX = s.metalFX && MTLFXTemporalScalerDescriptor.supportsDevice(device)
+        let wantMFX = s.metalFX && !mfxUnavailable && MTLFXTemporalScalerDescriptor.supportsDevice(device)
         let scale = clampf(s.resolutionScale, wantMFX ? 0.5 : 0.5, 1)
         let renderW = max(64, Int(Float(outW) * scale)), renderH = max(64, Int(Float(outH) * scale))
         ensureTargets(renderW: renderW, renderH: renderH, outW: outW, outH: outH, metalFX: wantMFX)
@@ -320,6 +321,13 @@ final class Renderer {
         track(setupCB, "Setup")
         ensureParticles(s.particleBudget, cb: setupCB)
         let scaler: MTLFXTemporalScaler? = wantMFX ? ensureMetalFX(T) : nil
+        if wantMFX && scaler == nil {
+            // The targets were sized for upscaling; fall back to TAA from the next frame on.
+            mfxUnavailable = true
+            setupCB.addCompletedHandler { [weak self] _ in self?.inFlight.signal() }
+            setupCB.commit()
+            return
+        }
         let temporal = scaler != nil || (s.taa && P.taa != nil)
 
         // Camera + jitter.
