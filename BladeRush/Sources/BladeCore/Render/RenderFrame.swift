@@ -2,12 +2,12 @@
 // Metal renderer consumes it. Struct layouts marked "GPU" are mirrored in Common.metal.
 import Foundation
 
-/// Per-instance data (GPU, 208 bytes): model matrices for motion vectors and shading params.
+/// Per-instance data (GPU, 176 bytes): model matrices for motion vectors and shading params.
 public struct InstanceGPU {
     public var model: Mat4
     public var prevModel: Mat4
     public var tint: Vec4        // rgb multiplier, a = opacity (ghosts / invisibility)
-    public var params: Vec4      // x hit flash, y emissive boost, z telegraph glow, w dissolve
+    public var params: Vec4      // x hit flash, y emissive boost, z telegraph glow, w flags (1000 = arena floor)
     public var flash: Vec4       // rgb hit flash color, a = telegraph kind (0 none 1 white 2 red 3 purple 4 gold)
     public init(model: Mat4, prevModel: Mat4, tint: Vec4 = Vec4(1, 1, 1, 1), params: Vec4 = .zero, flash: Vec4 = Vec4(1, 1, 1, 0)) {
         self.model = model; self.prevModel = prevModel; self.tint = tint; self.params = params; self.flash = flash

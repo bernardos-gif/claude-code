@@ -10,6 +10,9 @@ public struct UIQuadGPU {
     public var color2: Vec4      // bottom color (gradient)
     public var params: Vec4      // x corner radius, y border width, z glow, w kind (0 rect, 1 ring arc, 2 diamond, 3 glyph)
     public var extra: Vec4       // border color rgb + a / arc (start, end, thickness) / glyph uv rect
+    public init(rect: Vec4, color: Vec4, color2: Vec4, params: Vec4, extra: Vec4) {
+        self.rect = rect; self.color = color; self.color2 = color2; self.params = params; self.extra = extra
+    }
 }
 
 public enum UIFont: Int { case ui = 0, title = 1, mono = 2 }

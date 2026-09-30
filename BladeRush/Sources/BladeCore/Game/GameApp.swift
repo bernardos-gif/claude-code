@@ -85,6 +85,8 @@ public final class GameApp {
     public var paused = false
     public var debug = DebugState()
     public var time: Double = 0
+    /// Real duration of the last update (seconds).
+    public private(set) var lastDt: Double = 0
     public var menuCursor: [String: Int] = [:]
     public var settingsTab = 0
     public var armoryWeapon = 0
@@ -129,6 +131,18 @@ public final class GameApp {
         audio.load()
         audio.setVolumes(settings)
         audio.enterMenu()
+    }
+
+    /// Same as loadAssets, without blocking the first frames (the window can show the title
+    /// screen while the sound bank is synthesized). Call from the main thread.
+    public func loadAssetsAsync(_ done: @escaping () -> Void = {}) {
+        audio.setVolumes(settings)
+        audio.loadInBackground { [weak self] in
+            guard let self = self else { return }
+            self.audio.setVolumes(self.settings)
+            if let w = self.world { self.audio.enterArena(w.arena.def) } else { self.audio.enterMenu() }
+            done()
+        }
     }
 
     public func showToast(_ s: String) { toast = (s, time + 2.5) }
@@ -319,6 +333,7 @@ public final class GameApp {
     // MARK: - Update
 
     public func update(dt: Double, input: FrameInput) {
+        lastDt = dt
         time += dt
         screenTime += dt
         lastInput = input

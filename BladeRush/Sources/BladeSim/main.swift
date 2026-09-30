@@ -163,6 +163,16 @@ case "app-smoke":
     print("after continue: \(app.screen)")
     print("max ui items \(maxUI) draws \(maxDraws) particle spawns/frame \(maxParticles) trail verts \(maxTrailVerts) audio peak \(peak) nan \(nan)")
     print("save: defeated \(app.save.defeated) unlockedTier \(app.save.unlockedTier)")
+case "icon":
+    // Writes the app icon at every macOS iconset size: BladeSim icon <dir>
+    let dir = URL(fileURLWithPath: args.count > 2 ? args[2] : "preview/AppIcon.iconset")
+    try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+    for (name, size) in [("16x16", 16), ("16x16@2x", 32), ("32x32", 32), ("32x32@2x", 64), ("128x128", 128), ("128x128@2x", 256),
+                         ("256x256", 256), ("256x256@2x", 512), ("512x512", 512), ("512x512@2x", 1024)] {
+        let url = dir.appendingPathComponent("icon_\(name).png")
+        do { try IconArt.render(size: size).writePNG(to: url) } catch { print("failed \(url.path): \(error)"); exit(1) }
+    }
+    print("iconset written to \(dir.path)")
 case "selftest":
     let results = SelfTests.runAll()
     var failed = 0

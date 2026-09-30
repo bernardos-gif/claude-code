@@ -77,6 +77,9 @@ public struct SceneBuilder {
         var f = RenderFrame()
         f.settings = app.settings.renderSettings()
         f.time = Float(app.time)
+        // Simulation delta for GPU particles: follows hitstop / slow motion and stops while paused.
+        let inFight = app.screen == .fight || app.screen == .victory || app.screen == .death
+        f.dt = app.paused && app.screen == .fight ? 0 : Float(app.lastDt) * Float(inFight ? min(1, (app.world?.timeScale ?? 1) * 1.5 + 0.1) : 1)
         f.cameraCut = cameraCut
         let aspect = width / max(height, 1)
         var arenaDef: ArenaDef?
@@ -169,8 +172,10 @@ public struct SceneBuilder {
 
     mutating func addArena(_ f: inout RenderFrame, _ a: BuiltArena) {
         for set in a.sets {
-            let inst = set.transforms.enumerated().map { (i, m) in
-                InstanceGPU(model: m, prevModel: m, params: Vec4(0, 0, 0, Float(i)))
+            // params.w = 1000 flags the arena floor (procedural floor patterns + SSR mask in Mesh.metal).
+            let flag: Float = set.name == "floor" ? 1000 : 0
+            let inst = set.transforms.map { m in
+                InstanceGPU(model: m, prevModel: m, params: Vec4(0, 0, 0, flag))
             }
             f.draws.append(DrawCall(mesh: set.mesh, materials: set.materials, instances: inst, castShadow: set.castShadow, doubleSided: set.name == "backdrop"))
         }

@@ -19,6 +19,18 @@ public final class AudioDirector {
         ready = true
     }
 
+    /// Synthesizes the sound bank on a background queue; `ready` flips on the main queue
+    /// (the dispatch hop publishes the finished bank to the game thread).
+    public func loadInBackground(_ done: @escaping () -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            timed("synthesize sound bank", "audio") { self.bank.generate() }
+            DispatchQueue.main.async {
+                self.ready = true
+                done()
+            }
+        }
+    }
+
     @discardableResult
     public func play(_ name: String, gain: Float = 1, pitch: Float = 1, at pos: Vec3? = nil, bus: AudioBus = .sfx, pitchJitter: Float = 0.04,
                      reverb: Float = 0.25) -> Int {
