@@ -1,18 +1,58 @@
-# Compiles and tests Blade Rush on a real macOS runner: Swift build of every target,
-# unit tests, offline compilation of each Metal shader file (the way ShaderLibrary.swift
-# assembles them) and the .app packaging script. Runs on pull requests that touch
-# BladeRush/ and on manual dispatch.
+# Builds Blade Rush on a real macOS runner. Two parallel jobs:
+#   shaders  offline compile of every Metal file, assembled the way ShaderLibrary.swift does
+#   app      Swift build, unit tests, headless checks, .app packaging, zipped artifact
+# Runs on pushes to the Blade Rush development branch, on pull requests that touch
+# BladeRush/, and on manual dispatch.
 name: BladeRush macOS
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'claude/zen-ride-6z04n9'
+    paths:
+      - 'BladeRush/**'
+      - '.github/workflows/bladerush-macos.yml'
   pull_request:
     paths:
       - 'BladeRush/**'
       - '.github/workflows/bladerush-macos.yml'
 
+concurrency:
+  group: bladerush-macos-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  shaders:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: BladeRush
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app || true
+          xcrun -sdk macosx metal --version || true
+
+      - name: Compile Metal shaders offline
+        run: |
+          OUT="$RUNNER_TEMP/msl"
+          mkdir -p "$OUT"
+          failed=0
+          for f in Sources/BladeRush/Shaders/*.metal; do
+            n="$(basename "$f" .metal)"
+            [ "$n" = "Common" ] && continue
+            cat Sources/BladeRush/Shaders/Common.metal "$f" > "$OUT/$n.metal"
+            echo "== $n.metal"
+            if ! xcrun -sdk macosx metal -std=metal3.0 -fpreserve-invariance -c "$OUT/$n.metal" -o "$OUT/$n.air"; then
+              failed=1
+            fi
+          done
+          exit $failed
+
+  app:
     runs-on: macos-14
     defaults:
       run:
@@ -24,7 +64,6 @@ jobs:
         run: |
           sudo xcode-select -s /Applications/Xcode_15.4.app || true
           swift --version
-          xcrun -sdk macosx metal --version || true
 
       - name: Build (release)
         run: swift build -c release
@@ -38,18 +77,6 @@ jobs:
           "$BIN/BladeSim" selftest
           "$BIN/BladeSim" validate
           "$BIN/BladeSim" simulate gorrik 60
-
-      - name: Compile Metal shaders offline
-        run: |
-          OUT="$RUNNER_TEMP/msl"
-          mkdir -p "$OUT"
-          for f in Sources/BladeRush/Shaders/*.metal; do
-            n="$(basename "$f" .metal)"
-            [ "$n" = "Common" ] && continue
-            cat Sources/BladeRush/Shaders/Common.metal "$f" > "$OUT/$n.metal"
-            echo "== $n.metal"
-            xcrun -sdk macosx metal -std=metal3.0 -fpreserve-invariance -c "$OUT/$n.metal" -o "$OUT/$n.air"
-          done
 
       - name: Package .app
         run: |
