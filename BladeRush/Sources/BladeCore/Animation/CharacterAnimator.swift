@@ -50,6 +50,10 @@ public final class CharacterAnimator {
     public var tremble: Float = 0
     private var trembleT: Float = 0
 
+    /// Increments whenever a foot lands (footstep sounds / dust).
+    public private(set) var footstepCount = 0
+    public private(set) var lastFootstep = Vec3.zero
+
     // Outputs.
     public private(set) var result: RigResult
     public private(set) var worldMatrix: Mat4 = .identity
@@ -234,7 +238,11 @@ public final class CharacterAnimator {
             let e = Ease.inOutQuad.apply(u)
             feet[i].planted = vlerp(feet[i].from, feet[i].to, e)
             feet[i].lift = sin(kPi * u) * lift
-            if u >= 1 { feet[i].stepping = false; feet[i].lift = 0; feet[i].planted = feet[i].to }
+            if u >= 1 {
+                feet[i].stepping = false; feet[i].lift = 0; feet[i].planted = feet[i].to
+                footstepCount += 1
+                lastFootstep = feet[i].planted
+            }
         }
         // Start new steps.
         let moving = speed > 0.25

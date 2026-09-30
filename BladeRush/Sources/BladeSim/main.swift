@@ -110,6 +110,59 @@ case "preview-weapons":
         logInfo("\(id): \(m.triangleCount) tris")
     }
     try? r.image.writePNG(to: outURL("weapons.png"))
+case "app-smoke":
+    // Drives the full GameApp without a window: menus, a fight with the bot, frame building and audio.
+    setenv("BLADERUSH_HOME", FileManager.default.temporaryDirectory.appendingPathComponent("bladerush-smoke").path, 1)
+    let app = timed("GameApp init") { GameApp() }
+    timed("assets") { app.loadAssets() }
+    let dt = 1.0 / 60
+    var frames = 0
+    var maxUI = 0, maxDraws = 0, maxParticles = 0, maxTrailVerts = 0
+    func frame(_ events: [InputEvent] = [], move: Vec2 = .zero, any: Bool = false) {
+        var inp = FrameInput()
+        inp.events = events
+        inp.move = move
+        inp.anyKey = any
+        app.update(dt: dt, input: inp)
+        let f = app.buildFrame(width: 1920, height: 1080)
+        maxUI = max(maxUI, f.ui.items.count); maxDraws = max(maxDraws, f.draws.count)
+        maxParticles = max(maxParticles, f.particleSpawns.count); maxTrailVerts = max(maxTrailVerts, f.trailVertices.count)
+        frames += 1
+    }
+    func press(_ a: InputAction) { frame([InputEvent(action: a, pressed: true, offset: 0), InputEvent(action: a, pressed: false, offset: 0.01)]) }
+    frame(any: true)                       // title -> main
+    print("screen after title: \(app.screen)")
+    press(.confirm)                        // Campaign Rush
+    print("screen: \(app.screen)")
+    press(.confirm)                        // Tier I
+    print("screen: \(app.screen)")
+    press(.confirm)                        // begin with first weapon
+    for _ in 0..<5 { frame() }             // loading -> fight
+    print("screen: \(app.screen) world: \(app.world != nil)")
+    let bot = PlayerBot(skill: 0.9, perfectBias: 0.6, seed: 3)
+    var left = [Float](repeating: 0, count: 800), right = [Float](repeating: 0, count: 800)
+    var peak: Float = 0, nan = false
+    var t = 0.0
+    while t < 90, app.screen == .fight {
+        guard let w = app.world else { break }
+        let (inputs, move) = bot.think(world: w, dt: dt)
+        let evs = inputs.compactMap { ti -> InputEvent? in
+            let map: [PlayerAction: InputAction] = [.light: .light, .heavy: .heavy, .ability: .ability, .parry: .parry, .dodge: .dodge, .heal: .heal]
+            return map[ti.action].map { InputEvent(action: $0, pressed: ti.pressed, offset: ti.offset) }
+        }
+        frame(evs, move: move)
+        left.withUnsafeMutableBufferPointer { l in right.withUnsafeMutableBufferPointer { r in app.audio.mixer.render(frames: 800, left: l.baseAddress!, right: r.baseAddress!) } }
+        for v in left { if !v.isFinite { nan = true }; peak = max(peak, abs(v)) }
+        t += dt
+    }
+    print("after fight: screen \(app.screen) t=\(String(format: "%.1f", t))s frames \(frames)")
+    for _ in 0..<240 { frame() }
+    print("final screen: \(app.screen)")
+    press(.confirm)
+    for _ in 0..<10 { frame() }
+    print("after continue: \(app.screen)")
+    print("max ui items \(maxUI) draws \(maxDraws) particle spawns/frame \(maxParticles) trail verts \(maxTrailVerts) audio peak \(peak) nan \(nan)")
+    print("save: defeated \(app.save.defeated) unlockedTier \(app.save.unlockedTier)")
 case "selftest":
     let results = SelfTests.runAll()
     var failed = 0

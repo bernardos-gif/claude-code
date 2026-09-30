@@ -26,7 +26,7 @@ public final class WeaponInstance {
         self.visual = visual
         self.isLeft = isLeft
         type = WeaponCatalog.get(visual.type)
-        mesh = WeaponCatalog.mesh(visual)
+        mesh = ContentCache.weaponMesh(visual)
         materials = WeaponCatalog.materials(visual)
         glow = visual.glowStrength
         if let f = type.flex {
@@ -238,7 +238,7 @@ public final class Fighter {
         let sk = Skeleton(visual.body)
         skeleton = sk
         height = visual.body.height
-        let built = timed("character mesh \(name)", "load") { CharacterBuilder.build(visual, skeleton: sk, quality: quality) }
+        let built = timed("character mesh \(name)", "load") { ContentCache.character(visual, skeleton: sk, quality: quality) }
         mesh = built.mesh
         materials = built.materials
         weaponSlots = weapons.isEmpty ? [WeaponVisual()] : weapons

@@ -43,6 +43,9 @@ public final class World: CombatContext {
     public var subtitles: [(String, String, Double)] = []
     public private(set) var stepCount = 0
     public var lastStepsPerFrame = 0
+    public let trails = TrailBuilder()
+    /// Recent defense results with timing, for the frame-data overlay.
+    public private(set) var defenseLog: [(String, Double)] = []
 
     public var tuning: CombatTuning { data.tuning.tuning }
     public var lib: AnimLibrary { data.anims }
@@ -55,7 +58,7 @@ public final class World: CombatContext {
         self.timingAssist = timingAssist
         let arenaId = encounter.arena.isEmpty ? (data.bosses[encounter.bosses.first ?? ""]?.arena ?? "") : encounter.arena
         let arenaDef = data.arenas[arenaId] ?? data.arenas.values.first ?? ArenaDef()
-        arena = timed("arena \(arenaDef.id)", "load") { ArenaBuilder.build(arenaDef, quality: quality) }
+        arena = timed("arena \(arenaDef.id)", "load") { ContentCache.arena(arenaDef, quality: quality) }
         let t = data.tuning.tuning
         windows = DefenseWindows.from(t.timing, assist: timingAssist, hardModeMult: hardMode ? t.hardMode.windowMult : 1)
         let pf = Fighter(isPlayer: true, name: "The Blade", visual: playerVisual, weapons: playerWeapons.map { $0.visual },
@@ -308,6 +311,28 @@ public final class World: CombatContext {
             for b in bosses where !b.fighter.dead { resolveAttacks(b.fighter) }
             updateHazards(dt)
         }
+        recordTrails()
+    }
+
+    private func recordTrails() {
+        for f in [player.fighter] + bosses.map({ $0.fighter }) {
+            var emit = false
+            var side = "R"
+            if let mv = f.move, let st = mv.strike, !st.feint, st.hitbox != .none {
+                emit = mv.isActive || (mv.phase == .startup && mv.timeline.timeToActive < 0.035 * mv.timeline.speed)
+                side = st.hitbox == .offhand ? "L" : st.side
+            }
+            trails.record(f.weapon, emitting: emit && side != "L", time: now)
+            if let off = f.offhand, f.grip != .shield || side == "L" {
+                trails.record(off, emitting: emit && (side == "L" || side == "both"), time: now)
+            }
+        }
+    }
+
+    private func logDefense(_ text: String) {
+        defenseLog.append((text, realTime))
+        if defenseLog.count > 6 { defenseLog.removeFirst() }
+        logDebug(text, "combat")
     }
 
     /// Keeps fighters from overlapping.
@@ -421,6 +446,18 @@ public final class World: CombatContext {
         } else {
             guard let boss = boss(for: attacker) else { return }
             var outcome = DefenseResolver.resolve(now: now, telegraph: st.telegraph, isGrab: st.hitbox == .grab, state: player.defense, windows: windows)
+            let ms = { (t: Double?) -> String in t.map { String(format: "%+.0f ms", (self.now - $0) * 1000) } ?? "n/a" }
+            switch outcome {
+            case .parried(let p): logDefense("\(p ? "PERFECT PARRY" : "PARRY") \(ms(player.defense.parryPressTime)) after press [\(st.telegraph.rawValue)]")
+            case .dodged(let p): logDefense("\(p ? "PERFECT DODGE" : "DODGE") \(ms(player.defense.dodgeStartTime)) into dodge")
+            case .blocked: logDefense("BLOCK [\(st.telegraph.rawValue)]")
+            case .hit:
+                if let tp = player.defense.parryPressTime, now - tp < 0.6 { logDefense("HIT - parry pressed \(Int((now - tp) * 1000)) ms early (window \(Int(windows.parry * 1000)) ms) [\(st.telegraph.rawValue)]") }
+                else if st.telegraph == .red { logDefense("HIT - red attack must be dodged") }
+                else { logDefense("HIT [\(st.telegraph.rawValue)]") }
+            case .counter: logDefense("IAIDO COUNTER")
+            case .ignored: break
+            }
             if player.invincible, case .hit = outcome { outcome = .ignored }
             if player.state == .deathblow || player.state == .dead { outcome = .ignored }
             switch outcome {
