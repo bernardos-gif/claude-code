@@ -171,6 +171,11 @@ Scripts/              build, run, package, test, boss data generator, type-check
 4. On Linux, `Scripts/maccheck/check_mac.sh`: type-checks the macOS target against stub
    modules of the Apple frameworks.
 
+The GitHub workflow `.github/workflows/bladerush-macos.yml` repeats this on a macOS runner and
+adds an offline `xcrun metal` compile of every shader file plus the `.app` packaging. It runs
+on pull requests that touch `BladeRush/` and on manual dispatch (Actions tab → BladeRush
+macOS → Run workflow).
+
 ## Status and known risks
 
 The game code in `BladeCore` is compiled, unit-tested and exercised end to end by the headless
