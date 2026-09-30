@@ -173,8 +173,13 @@ Scripts/              build, run, package, test, boss data generator, type-check
 
 The GitHub workflow `.github/workflows/bladerush-macos.yml` repeats this on a macOS runner and
 adds an offline `xcrun metal` compile of every shader file plus the `.app` packaging. It runs
-on pull requests that touch `BladeRush/` and on manual dispatch (Actions tab → BladeRush
-macOS → Run workflow).
+on pull requests that touch `BladeRush/`, and on manual dispatch once the workflow is on the
+default branch (Actions tab → BladeRush macOS → Run workflow). Each run uploads
+`BladeRush-macOS.zip` (the packaged app) on its Summary page.
+
+The app is ad-hoc signed and unnotarized, so macOS blocks the first launch of a downloaded
+copy. Open it once from System Settings → Privacy & Security → Open Anyway, or run
+`xattr -dr com.apple.quarantine BladeRush.app`.
 
 ## Status and known risks
 
