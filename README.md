@@ -5,6 +5,9 @@ Pick one of four elemental fighters (each with a unique combat style, animations
 
 Everything is procedural: models, animations, textures, icons, portraits, sound effects and music are generated in code, so the game has **no external asset files**. The architecture is set up so real assets can replace the placeholders later (see *Replacing placeholder assets*).
 
+> This repository also contains **[Blade Rush](BladeRush/README.md)**, a native macOS boss-rush
+> action game (Swift + Metal) in the `BladeRush/` folder.
+
 ---
 
 ## How to run

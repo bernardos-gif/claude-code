@@ -1,0 +1,144 @@
+// BLADE RUSH — player weapons. Hot reloaded between fights.
+// Frame data at 60 fps (startup / active / recovery), before the weapon speed multiplier.
+// comboFrame: first frame where the next light attack may be input (buffered earlier).
+// cancelFrame: first frame where dodge / parry can cancel the attack.
+{
+  "weapons": [
+    {
+      "id": "katana", "name": "Katana", "description": "Balanced, precise and parry-focused.",
+      "visual": { "type": "katana", "metal": "#c9ccd4", "handle": "#1a1512", "trim": "#9a7a3a", "glow": "#9fd2ff", "glowStrength": 0.25 },
+      "stats": { "damage": 1.0, "posture": 1.0, "speed": 1.0, "reach": 1.0, "staminaLight": 7, "staminaHeavy": 18, "abilityCost": 50,
+                 "parryPostureMult": 1.25, "chargeLevels": 2, "chargeTime": 0.45 },
+      "trail": ["#ffffff", "#6aa8ff"],
+      "light": [
+        { "anim": "slash_h",  "startup": 9,  "active": 4, "recovery": 16, "damage": 9,  "posture": 7,  "move": 0.35, "weight": "light", "comboFrame": 13, "cancelFrame": 13 },
+        { "anim": "slash_hb", "startup": 8,  "active": 4, "recovery": 16, "damage": 9,  "posture": 7,  "move": 0.3,  "weight": "light", "comboFrame": 12, "cancelFrame": 12 },
+        { "anim": "diag",     "startup": 10, "active": 5, "recovery": 18, "damage": 11, "posture": 9,  "move": 0.35, "weight": "light", "comboFrame": 15, "cancelFrame": 15 },
+        { "anim": "thrust",   "startup": 13, "active": 5, "recovery": 24, "damage": 16, "posture": 14, "move": 0.9,  "weight": "medium", "knockback": 0.4, "comboFrame": 22 }
+      ],
+      "heavy": [
+        { "anim": "rising",   "startup": 20, "active": 6, "recovery": 28, "damage": 22, "posture": 26, "move": 0.4, "weight": "heavy", "launch": true },
+        { "anim": "overhead", "startup": 14, "active": 6, "recovery": 30, "damage": 26, "posture": 34, "move": 0.6, "weight": "huge" }
+      ],
+      "ability": { "kind": "iaido", "name": "Iaido Counter", "duration": 1.2,
+        "strikes": [ { "anim": "iaido", "startup": 3, "active": 5, "recovery": 26, "damage": 42, "posture": 55, "move": 2.8, "weight": "huge", "invulnerable": true } ] },
+      "counter":    [ { "anim": "slash_hb", "startup": 4, "active": 5, "recovery": 18, "damage": 16, "posture": 14, "move": 1.2, "weight": "medium" } ],
+      "swapStrike": [ { "anim": "diag", "startup": 6, "active": 5, "recovery": 20, "damage": 14, "posture": 14, "move": 0.8, "weight": "medium" } ],
+      "deathblow":  [ { "anim": "thrust", "startup": 10, "active": 6, "recovery": 34, "damage": 0, "posture": 0, "move": 0.6, "weight": "huge", "invulnerable": true } ],
+      "perfectParryBonus": "doublePosture",
+      "perfectDodgeBonus": "counterSlash"
+    },
+    {
+      "id": "greatsword", "name": "Greatsword", "description": "Slow, heavy posture breaker.",
+      "visual": { "type": "greatsword", "metal": "#8e9098", "handle": "#2a1a10", "trim": "#5a4a3a", "glow": "#ff7a3a", "glowStrength": 0.0 },
+      "stats": { "damage": 1.55, "posture": 1.6, "speed": 0.88, "reach": 1.0, "staminaLight": 13, "staminaHeavy": 26, "abilityCost": 60,
+                 "parryPostureMult": 1.1, "chargeLevels": 3, "chargeTime": 0.5 },
+      "trail": ["#ffd9a0", "#ff6a1a"],
+      "light": [
+        { "anim": "slash_h",  "startup": 18, "active": 6, "recovery": 24, "damage": 16, "posture": 16, "move": 0.6, "weight": "medium", "comboFrame": 26, "cancelFrame": 26 },
+        { "anim": "slash_hb", "startup": 16, "active": 6, "recovery": 24, "damage": 17, "posture": 17, "move": 0.6, "weight": "medium", "comboFrame": 24, "cancelFrame": 24 },
+        { "anim": "overhead", "startup": 22, "active": 6, "recovery": 34, "damage": 26, "posture": 28, "move": 0.8, "weight": "heavy" }
+      ],
+      "heavy": [
+        { "anim": "overhead", "startup": 24, "active": 7, "recovery": 36, "damage": 30, "posture": 34, "move": 0.7, "weight": "heavy" },
+        { "anim": "slam",     "startup": 18, "active": 7, "recovery": 38, "damage": 36, "posture": 44, "move": 0.8, "weight": "heavy", "aoeRadius": 1.2 },
+        { "anim": "slam",     "startup": 16, "active": 7, "recovery": 40, "damage": 42, "posture": 56, "move": 0.9, "weight": "huge", "aoeRadius": 1.9, "hyperArmor": true }
+      ],
+      "ability": { "kind": "earthsplitter", "name": "Earthsplitter", "range": 6.6, "damage": 22, "posture": 26,
+        "strikes": [ { "anim": "slam", "startup": 26, "active": 6, "recovery": 36, "damage": 28, "posture": 30, "leap": 1.2, "move": 3.0, "weight": "huge", "hyperArmor": true } ] },
+      "counter":    [ { "anim": "slash_h", "startup": 10, "active": 6, "recovery": 26, "damage": 20, "posture": 22, "move": 0.8, "weight": "heavy" } ],
+      "swapStrike": [ { "anim": "slash_hb", "startup": 12, "active": 6, "recovery": 26, "damage": 22, "posture": 24, "move": 0.7, "weight": "heavy" } ],
+      "deathblow":  [ { "anim": "overhead", "startup": 14, "active": 6, "recovery": 36, "damage": 0, "posture": 0, "move": 0.5, "weight": "huge", "invulnerable": true } ],
+      "perfectParryBonus": "stagger",
+      "perfectDodgeBonus": "instantCharge"
+    },
+    {
+      "id": "daggers", "name": "Twin Daggers", "description": "Fastest weapon. Aggressive and dodge-focused.",
+      "visual": { "type": "dagger", "metal": "#b8bcc6", "handle": "#3a1a1a", "trim": "#6a2a2a", "glow": "#ff3a4a", "glowStrength": 0.2 },
+      "stats": { "damage": 0.62, "posture": 0.55, "speed": 1.22, "reach": 1.0, "staminaLight": 4, "staminaHeavy": 14, "abilityCost": 45,
+                 "parryPostureMult": 0.9, "chargeLevels": 1, "chargeTime": 0.4 },
+      "trail": ["#ffd0d0", "#d0203a"],
+      "light": [
+        { "anim": "stab",     "side": "R", "startup": 6, "active": 3, "recovery": 10, "damage": 5, "posture": 3.5, "move": 0.25, "weight": "light", "comboFrame": 8, "cancelFrame": 8 },
+        { "anim": "slash_hb", "side": "L", "startup": 6, "active": 3, "recovery": 10, "damage": 5, "posture": 3.5, "move": 0.2,  "weight": "light", "comboFrame": 8, "cancelFrame": 8 },
+        { "anim": "slash_h",  "side": "R", "startup": 6, "active": 3, "recovery": 10, "damage": 5, "posture": 3.5, "move": 0.2,  "weight": "light", "comboFrame": 8, "cancelFrame": 8 },
+        { "anim": "stab",     "side": "L", "startup": 6, "active": 3, "recovery": 10, "damage": 5, "posture": 3.5, "move": 0.25, "weight": "light", "comboFrame": 8, "cancelFrame": 8 },
+        { "anim": "diag",     "side": "R", "startup": 7, "active": 3, "recovery": 11, "damage": 6, "posture": 4,   "move": 0.2,  "weight": "light", "comboFrame": 9, "cancelFrame": 9 },
+        { "anim": "thrust",   "side": "both", "startup": 9, "active": 4, "recovery": 18, "damage": 9, "posture": 8, "move": 0.6, "weight": "medium" }
+      ],
+      "heavy": [
+        { "anim": "spin", "side": "both", "startup": 14, "active": 12, "recovery": 22, "damage": 12, "posture": 10, "spin": 360, "hits": 2, "move": 1.2, "weight": "medium" }
+      ],
+      "ability": { "kind": "bloodDance", "name": "Blood Dance", "extra": 3,
+        "strikes": [
+          { "anim": "stab",     "side": "R", "startup": 4, "active": 3, "recovery": 5, "damage": 6, "posture": 4, "bleed": 1, "move": 0.3, "weight": "light" },
+          { "anim": "slash_hb", "side": "L", "startup": 4, "active": 3, "recovery": 5, "damage": 6, "posture": 4, "bleed": 1, "move": 0.2, "weight": "light" },
+          { "anim": "slash_h",  "side": "R", "startup": 4, "active": 3, "recovery": 5, "damage": 6, "posture": 4, "bleed": 1, "move": 0.2, "weight": "light" },
+          { "anim": "stab",     "side": "L", "startup": 4, "active": 3, "recovery": 5, "damage": 6, "posture": 4, "bleed": 1, "move": 0.3, "weight": "light" },
+          { "anim": "diag",     "side": "R", "startup": 4, "active": 3, "recovery": 5, "damage": 6, "posture": 4, "bleed": 1, "move": 0.2, "weight": "light" },
+          { "anim": "rising",   "side": "L", "startup": 4, "active": 3, "recovery": 5, "damage": 6, "posture": 4, "bleed": 1, "move": 0.2, "weight": "light" },
+          { "anim": "spin", "side": "both", "startup": 5, "active": 8, "recovery": 6, "damage": 7, "posture": 5, "bleed": 1, "spin": 360, "hits": 2, "weight": "light" },
+          { "anim": "thrust", "side": "both", "startup": 7, "active": 4, "recovery": 20, "damage": 12, "posture": 10, "bleed": 2, "move": 0.8, "weight": "medium" }
+        ] },
+      "riposte": [
+        { "anim": "stab",     "side": "R", "startup": 3, "active": 3, "recovery": 5, "damage": 7, "posture": 6, "move": 0.3, "weight": "light" },
+        { "anim": "stab",     "side": "L", "startup": 3, "active": 3, "recovery": 5, "damage": 7, "posture": 6, "move": 0.2, "weight": "light" },
+        { "anim": "slash_h",  "side": "R", "startup": 3, "active": 3, "recovery": 5, "damage": 7, "posture": 6, "weight": "light" },
+        { "anim": "thrust", "side": "both", "startup": 5, "active": 4, "recovery": 16, "damage": 11, "posture": 10, "move": 0.6, "weight": "medium" }
+      ],
+      "counter":    [ { "anim": "thrust", "side": "both", "startup": 4, "active": 4, "recovery": 16, "damage": 10, "posture": 8, "move": 1.0, "weight": "medium" } ],
+      "swapStrike": [ { "anim": "diag", "side": "both", "startup": 5, "active": 4, "recovery": 16, "damage": 9, "posture": 8, "move": 0.8, "weight": "medium" } ],
+      "deathblow":  [ { "anim": "thrust", "side": "both", "startup": 8, "active": 5, "recovery": 30, "damage": 0, "posture": 0, "move": 0.6, "weight": "huge", "invulnerable": true } ],
+      "perfectParryBonus": "riposte",
+      "perfectDodgeBonus": "invisibility"
+    },
+    {
+      "id": "spear", "name": "Spear", "description": "Longest reach. Thrust-based spacing control.",
+      "visual": { "type": "spear", "metal": "#b0b4bc", "handle": "#4a2e18", "trim": "#8a6a3a", "glow": "#7affc8", "glowStrength": 0.15 },
+      "stats": { "damage": 0.95, "posture": 1.0, "speed": 1.0, "reach": 1.0, "staminaLight": 8, "staminaHeavy": 20, "abilityCost": 55,
+                 "parryPostureMult": 1.0, "chargeLevels": 2, "chargeTime": 0.45 },
+      "trail": ["#e8fff4", "#3acf8a"],
+      "light": [
+        { "anim": "thrust", "startup": 10, "active": 4, "recovery": 14, "damage": 9,  "posture": 7,  "move": 0.3, "weight": "light", "comboFrame": 14, "cancelFrame": 14 },
+        { "anim": "thrust", "startup": 9,  "active": 4, "recovery": 14, "damage": 9,  "posture": 7,  "move": 0.3, "weight": "light", "comboFrame": 13, "cancelFrame": 13 },
+        { "anim": "thrust", "startup": 13, "active": 5, "recovery": 22, "damage": 14, "posture": 13, "move": 0.9, "weight": "medium", "knockback": 0.5 }
+      ],
+      "heavy": [
+        { "anim": "slash_h", "startup": 18, "active": 8, "recovery": 26, "damage": 18, "posture": 16, "weight": "heavy", "move": 0.3 },
+        { "anim": "spin",    "startup": 14, "active": 14, "recovery": 28, "damage": 16, "posture": 16, "spin": 360, "hits": 2, "weight": "heavy", "move": 0.4 }
+      ],
+      "ability": { "kind": "vault", "name": "Vaulting Strike", "damage": 20, "posture": 22,
+        "strikes": [ { "anim": "vault", "startup": 14, "active": 6, "recovery": 30, "damage": 26, "posture": 28, "leap": 1.6, "move": 4.5, "aoeRadius": 1.6,
+                       "weight": "huge", "invulnerable": true } ] },
+      "counter":    [ { "anim": "thrust", "startup": 5, "active": 5, "recovery": 20, "damage": 15, "posture": 14, "move": 3.2, "weight": "medium" } ],
+      "riposte":    [ { "anim": "thrust", "startup": 6, "active": 5, "recovery": 22, "damage": 18, "posture": 20, "move": 0.8, "weight": "heavy" } ],
+      "swapStrike": [ { "anim": "thrust", "startup": 6, "active": 5, "recovery": 20, "damage": 13, "posture": 13, "move": 1.4, "weight": "medium" } ],
+      "deathblow":  [ { "anim": "thrust", "startup": 10, "active": 6, "recovery": 34, "damage": 0, "posture": 0, "move": 0.4, "weight": "huge", "invulnerable": true } ],
+      "perfectParryBonus": "pushback",
+      "perfectDodgeBonus": "autoLunge"
+    },
+    {
+      "id": "kusarigama", "name": "Kusarigama", "description": "Mid-range and technical: sickle, chain and control.",
+      "visual": { "type": "kusarigama", "metal": "#a0a4ac", "handle": "#3a2818", "trim": "#5a5a60", "glow": "#c07aff", "glowStrength": 0.25 },
+      "stats": { "damage": 0.85, "posture": 0.85, "speed": 1.05, "reach": 1.0, "staminaLight": 7, "staminaHeavy": 18, "abilityCost": 50,
+                 "parryPostureMult": 1.0, "chargeLevels": 1, "chargeTime": 0.45 },
+      "trail": ["#f0e0ff", "#8a3aff"],
+      "light": [
+        { "anim": "slash_h",     "startup": 8,  "active": 4, "recovery": 14, "damage": 8,  "posture": 6, "move": 0.3, "reach": 0.2, "weight": "light", "comboFrame": 12, "cancelFrame": 12 },
+        { "anim": "chain_swing", "startup": 12, "active": 7, "recovery": 18, "damage": 9,  "posture": 7, "reach": 0.8, "weight": "light", "comboFrame": 19, "cancelFrame": 19 },
+        { "anim": "slash_hb",    "startup": 8,  "active": 4, "recovery": 14, "damage": 8,  "posture": 6, "move": 0.3, "reach": 0.2, "weight": "light", "comboFrame": 12, "cancelFrame": 12 },
+        { "anim": "chain_throw", "startup": 14, "active": 8, "recovery": 22, "damage": 12, "posture": 10, "reach": 1.0, "weight": "medium" }
+      ],
+      "heavy": [
+        { "anim": "chain_swing", "startup": 16, "active": 22, "recovery": 24, "damage": 10, "posture": 8, "spin": 720, "hits": 3, "reach": 0.85, "weight": "medium" }
+      ],
+      "ability": { "kind": "chainPull", "name": "Chain Pull", "range": 8.5, "damage": 12, "posture": 25,
+        "strikes": [ { "anim": "chain_throw", "startup": 12, "active": 8, "recovery": 24, "damage": 6, "posture": 6, "reach": 2.0, "weight": "medium" } ] },
+      "counter":    [ { "anim": "chain_swing", "startup": 5, "active": 7, "recovery": 18, "damage": 12, "posture": 10, "reach": 0.9, "weight": "medium" } ],
+      "swapStrike": [ { "anim": "chain_throw", "startup": 6, "active": 7, "recovery": 18, "damage": 12, "posture": 10, "reach": 1.0, "weight": "medium" } ],
+      "deathblow":  [ { "anim": "slash_h", "startup": 10, "active": 6, "recovery": 32, "damage": 0, "posture": 0, "move": 0.5, "reach": 0.2, "weight": "huge", "invulnerable": true } ],
+      "perfectParryBonus": "disarm",
+      "perfectDodgeBonus": "chainLash"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+// BLADE RUSH — combat tuning. Saved changes apply instantly while the game runs
+// (the file is polled twice per second). Any key you delete falls back to its default.
+// Times are in seconds unless noted.
+{
+  "timing": {
+    "parryWindow": 0.150,          // total deflect window after pressing parry
+    "perfectParryWindow": 0.060,   // first part of the window = perfect parry
+    "parryWhiffRecovery": 0.28,    // vulnerable recovery after a parry that deflected nothing
+    "parrySpamCooldown": 0.30,     // parry presses ignored this long after a whiff
+    "blockAfter": 0.16,            // holding parry past the window turns into a block
+    "dodgeDuration": 0.42,
+    "dodgeIFrameStart": 0.015,
+    "dodgeIFrames": 0.200,         // invincibility frames
+    "perfectDodgeWindow": 0.100,   // dodge started within this long before impact = perfect
+    "dodgeCancelAfter": 0.30,
+    "dodgeDistance": 3.8,
+    "backstepDistance": 2.6,
+    "perfectDodgeSlowDuration": 0.5,
+    "perfectDodgeTimeScale": 0.3,
+    "inputBuffer": 0.150,
+    "hitInvulnerability": 0.30,
+    "windowScale": 1.0             // global multiplier on parry/dodge windows
+  },
+  "hitstop": {
+    "light": 0.040, "medium": 0.060, "heavy": 0.090, "huge": 0.120,
+    "parry": 0.060, "perfectParry": 0.110, "block": 0.045,
+    "deathblow": 0.250, "playerHit": 0.075, "postureBreak": 0.180
+  },
+  "player": {
+    "maxHealth": 100, "maxPosture": 100, "maxStamina": 100,
+    "staminaRegen": 60, "staminaRegenDelay": 0.45, "dodgeStamina": 20,
+    "postureRecoverDelay": 1.1, "postureRecoverRate": 24, "postureBreakStagger": 1.35,
+    "parryPostureFactor": 0.35, "perfectParryPostureFactor": 0.0,
+    "blockPostureFactor": 1.0, "blockDamageFactor": 0.12, "hitPostureFactor": 0.45,
+    "flasks": 3, "healAmount": 42, "healDuration": 0.95, "healHealTime": 0.55,
+    "walkSpeed": 2.4, "runSpeed": 5.4, "lockedMoveSpeed": 3.9, "acceleration": 28, "turnRate": 900,
+    "abilityMax": 100, "abilityGainHit": 4, "abilityGainParry": 6, "abilityGainPerfectParry": 15, "abilityGainPerfectDodge": 12,
+    "swapDuration": 0.28, "deathblowRange": 3.0,
+    "bleedDamagePerStack": 1.2, "bleedDuration": 5.0, "maxBleedStacks": 10
+  },
+  "boss": {
+    "postureRecoverDelay": 1.8, "postureRecoverRate": 9,
+    "parryPostureMult": 0.9, "perfectParryPostureMult": 2.0, "goldPerfectParryPostureMult": 3.4, "goldPunishStagger": 1.1,
+    "staggerDuration": 3.2, "deathblowDamageFraction": 0.4, "phaseTransitionDuration": 2.6,
+    "globalAggression": 1.0, "adaptiveStrength": 1.0,
+    "damageMult": 1.0, "healthMult": 1.0, "speedMult": 1.0,
+    "attackInterval": 1.1
+  },
+  "camera": {
+    "distance": 4.6, "height": 1.65, "lockOnDistance": 5.2, "fov": 58,
+    "mouseSensitivity": 0.0028, "stickSensitivity": 3.2,
+    "followHalfLife": 0.06, "lockOnHalfLife": 0.12,
+    "shakeLight": 0.18, "shakeHeavy": 0.42, "shakeParry": 0.3, "shakeSlam": 0.65
+  },
+  "hardMode": { "windowMult": 0.72, "bossSpeedMult": 1.14, "bossDamageMult": 1.3, "bossPostureMult": 1.2 }
+}
