@@ -1,0 +1,218 @@
+// BLADE RUSH — arena theme presets.
+// sky: dusk, storm, eclipse, aurora, bloodmoon, underground, night, overcast, dawn, void
+// floor: flagstone, dirt, planks, tatami, snow, ice, marble, obsidian, sand, moss, rock, bone, lava
+// weather: none, rain, snow, ash, embers, leaves, dust, sparks, spores, petals
+// props: pillar, arch, brokenWall, statue, brazier, lantern, torch, banner, crate, barrel, mast, anvil, forge,
+//        crystal, iceCrystal, rock, boulder, swordGrave, throne, torii, obelisk, bones, tree, bell, chains, gate
+// shifts: lighting overrides applied during boss phase transitions (phase "lighting" key).
+{
+  "arenas": [
+    {
+      "id": "outcast_yard", "name": "The Outcast Yard", "radius": 14,
+      "floor": "dirt", "floorColor": "#6b5840", "floorColor2": "#4a3a2a", "floorRoughness": 0.95,
+      "sky": "dusk", "sunDir": [-0.55, 0.22, -0.8], "sunColor": "#ffa45a", "sunIntensity": 3.4, "ambient": 0.42,
+      "fogColor": "#8a6a58", "fogDensity": 0.02, "fogHeight": 5, "fogScatter": 0.75,
+      "rimColor": "#ffc890", "rimIntensity": 0.7,
+      "grading": { "exposure": 1.0, "contrast": 1.1, "saturation": 1.05, "tint": "#fff0e0", "shadows": "#2a2030", "highlights": "#ffe0b0", "vignette": 0.38 },
+      "weather": "dust", "weatherIntensity": 0.8,
+      "backdrop": "cliffs", "backdropColor": "#4a3c34", "footstep": "dirt",
+      "props": [
+        { "kind": "brokenWall", "count": 7, "ring": 19, "jitter": 1.5, "scale": 1.0, "seed": 3, "broken": 0.6 },
+        { "kind": "torch", "count": 6, "ring": 16.5, "seed": 5, "light": true, "color": "#ff8a3a" },
+        { "kind": "tree", "count": 4, "ring": 23, "seed": 11, "scale": 1.1 },
+        { "kind": "rock", "count": 9, "ring": 18, "jitter": 3, "seed": 7 },
+        { "kind": "barrel", "count": 5, "ring": 16.8, "jitter": 1, "seed": 13, "angleOffset": 30 }
+      ],
+      "shifts": { "red": { "sunColor": "#ff5a3a", "fogColor": "#6a2a20", "tint": "#ffd0c0" } },
+      "music": { "tempo": 96, "root": 45, "mode": "aeolian", "drums": "sparse", "pad": "strings", "lead": "pluck" }
+    },
+    {
+      "id": "iron_garrison", "name": "The Iron Garrison", "radius": 15,
+      "floor": "flagstone", "floorColor": "#6a6a6e", "floorColor2": "#3c3c42", "floorRoughness": 0.82, "wet": 0.25,
+      "sky": "overcast", "sunDir": [0.3, 0.55, -0.6], "sunColor": "#dfe6f0", "sunIntensity": 2.4, "ambient": 0.6,
+      "fogColor": "#7a8088", "fogDensity": 0.016, "fogHeight": 7, "fogScatter": 0.4,
+      "rimColor": "#cfe0ff", "rimIntensity": 0.5,
+      "grading": { "exposure": 1.05, "contrast": 1.12, "saturation": 0.85, "tint": "#eef2ff", "shadows": "#1a2030", "highlights": "#f0f0ff", "vignette": 0.32 },
+      "weather": "none",
+      "backdrop": "walls", "backdropColor": "#4a4a52", "footstep": "stone",
+      "props": [
+        { "kind": "pillar", "count": 10, "ring": 18, "seed": 2, "broken": 0.15 },
+        { "kind": "banner", "count": 6, "ring": 20.5, "seed": 4, "color": "#7a1a1a", "angleOffset": 18 },
+        { "kind": "brazier", "count": 4, "ring": 16.5, "seed": 6, "angleOffset": 45, "color": "#ff9040" },
+        { "kind": "gate", "count": 1, "ring": 22, "seed": 8, "angleOffset": 180 },
+        { "kind": "crate", "count": 5, "ring": 17.5, "jitter": 1.4, "seed": 9, "angleOffset": 70 }
+      ],
+      "shifts": { "red": { "sunColor": "#ff7050", "fogColor": "#5a3030", "tint": "#ffd8d0" }, "dark": { "sunIntensity": 1.2, "fogColor": "#30343c" } },
+      "music": { "tempo": 112, "root": 43, "mode": "aeolian", "drums": "march", "pad": "strings", "lead": "brass" }
+    },
+    {
+      "id": "crimson_monastery", "name": "The Crimson Monastery", "radius": 14,
+      "floor": "tatami", "floorColor": "#8a6a3e", "floorColor2": "#5a3a1e", "floorRoughness": 0.7, "wet": 0.1,
+      "sky": "dusk", "sunDir": [0.6, 0.18, -0.7], "sunColor": "#ff6a4a", "sunIntensity": 3.0, "ambient": 0.45, "ambientColor": "#ffb0a0",
+      "fogColor": "#9a4a4a", "fogDensity": 0.022, "fogHeight": 6, "fogScatter": 0.8,
+      "rimColor": "#ff9a8a", "rimIntensity": 0.8,
+      "grading": { "exposure": 1.0, "contrast": 1.1, "saturation": 1.15, "tint": "#fff0ec", "shadows": "#301828", "highlights": "#ffe0d0", "vignette": 0.4 },
+      "weather": "petals", "weatherIntensity": 1.0,
+      "backdrop": "spires", "backdropColor": "#3a2430", "footstep": "wood",
+      "props": [
+        { "kind": "torii", "count": 3, "ring": 20, "seed": 1, "angleOffset": 0, "arc": 240 },
+        { "kind": "lantern", "count": 8, "ring": 16.5, "seed": 3, "light": true, "color": "#ff9a50" },
+        { "kind": "bell", "count": 1, "ring": 21, "seed": 5, "angleOffset": 180 },
+        { "kind": "tree", "count": 5, "ring": 24, "seed": 7, "scale": 1.2 },
+        { "kind": "pillar", "count": 8, "ring": 19, "seed": 9, "color": "#7a2018", "material": "plain", "broken": 0.0, "angleOffset": 22 }
+      ],
+      "shifts": { "red": { "sunColor": "#ff2a2a", "fogColor": "#5a1010", "tint": "#ffc0c0", "sky": "bloodmoon" } },
+      "music": { "tempo": 104, "root": 47, "mode": "phrygian", "drums": "taiko", "pad": "choir", "lead": "shakuhachi" }
+    },
+    {
+      "id": "drowned_harbor", "name": "The Drowned Harbor", "radius": 15, "shape": "rect", "size": [30, 22],
+      "floor": "planks", "floorColor": "#5a4632", "floorColor2": "#2a2018", "floorRoughness": 0.55, "wet": 0.8,
+      "sky": "storm", "sunDir": [-0.2, 0.5, 0.7], "sunColor": "#a8c0d8", "sunIntensity": 1.6, "ambient": 0.55, "ambientColor": "#8aa0b8",
+      "fogColor": "#4a5a66", "fogDensity": 0.03, "fogHeight": 8, "fogScatter": 0.3,
+      "rimColor": "#bfe6ff", "rimIntensity": 0.6,
+      "grading": { "exposure": 1.1, "contrast": 1.12, "saturation": 0.85, "tint": "#e0f0ff", "shadows": "#0a1a24", "highlights": "#d8f0ff", "vignette": 0.42 },
+      "weather": "rain", "weatherIntensity": 1.0, "lightning": true,
+      "backdrop": "sea", "backdropColor": "#1e2830", "footstep": "wood",
+      "props": [
+        { "kind": "mast", "count": 3, "ring": 4, "seed": 2, "angleOffset": 40, "arc": 200 },
+        { "kind": "crate", "count": 8, "ring": 2.5, "jitter": 2, "seed": 4 },
+        { "kind": "barrel", "count": 8, "ring": 2, "jitter": 2.5, "seed": 6, "angleOffset": 20 },
+        { "kind": "chains", "count": 4, "ring": 3.5, "seed": 8, "angleOffset": 70 },
+        { "kind": "lantern", "count": 4, "ring": 1.5, "seed": 10, "light": true, "color": "#ffb060", "angleOffset": 45 }
+      ],
+      "shifts": { "storm": { "sunIntensity": 1.0, "fogColor": "#2a3440", "tint": "#d0e8ff" } },
+      "music": { "tempo": 124, "root": 45, "mode": "dorian", "drums": "war", "pad": "strings", "lead": "pluck" }
+    },
+    {
+      "id": "ashen_forge", "name": "The Ashen Forge", "radius": 14,
+      "floor": "obsidian", "floorColor": "#2a2226", "floorColor2": "#ff4a10", "floorRoughness": 0.35, "wet": 0.35,
+      "sky": "underground", "sunDir": [0.1, 0.9, 0.2], "sunColor": "#ff7a3a", "sunIntensity": 1.4, "ambient": 0.35, "ambientColor": "#ff8a5a",
+      "fogColor": "#5a2a18", "fogDensity": 0.028, "fogHeight": 9, "fogScatter": 0.5,
+      "rimColor": "#ff8a4a", "rimIntensity": 0.9,
+      "grading": { "exposure": 1.1, "contrast": 1.15, "saturation": 1.1, "tint": "#fff0e0", "shadows": "#1a0a0a", "highlights": "#ffd0a0", "vignette": 0.45, "bloom": 1.2 },
+      "weather": "embers", "weatherIntensity": 1.2,
+      "backdrop": "forge", "backdropColor": "#2a201e", "footstep": "metal",
+      "props": [
+        { "kind": "forge", "count": 5, "ring": 16.5, "seed": 2, "light": true, "color": "#ff6a20", "scale": 1.3 },
+        { "kind": "anvil", "count": 6, "ring": 17.5, "seed": 4, "angleOffset": 30 },
+        { "kind": "chains", "count": 6, "ring": 19, "seed": 6, "angleOffset": 15 },
+        { "kind": "pillar", "count": 8, "ring": 20, "seed": 8, "color": "#3a302c", "broken": 0.4 },
+        { "kind": "boulder", "count": 5, "ring": 22, "jitter": 3, "seed": 10 }
+      ],
+      "lights": [ { "position": [0, 9, 0], "color": "#ff5a20", "intensity": 30, "radius": 22, "flicker": 0.2 } ],
+      "shifts": { "fire": { "sunColor": "#ff4a10", "sunIntensity": 2.2, "fogColor": "#7a2a10", "tint": "#ffe0c0" } },
+      "music": { "tempo": 92, "root": 40, "mode": "locrian", "drums": "industrial", "pad": "organ", "lead": "brass" }
+    },
+    {
+      "id": "frost_citadel", "name": "The Frost Citadel", "radius": 15,
+      "floor": "ice", "floorColor": "#a8c8dc", "floorColor2": "#e8f4ff", "floorRoughness": 0.12, "wet": 0.9,
+      "sky": "aurora", "sunDir": [0.4, 0.35, 0.7], "sunColor": "#bfe0ff", "sunIntensity": 2.2, "ambient": 0.55, "ambientColor": "#9ac8ff",
+      "fogColor": "#8ab0d0", "fogDensity": 0.02, "fogHeight": 6, "fogScatter": 0.5,
+      "rimColor": "#bff4ff", "rimIntensity": 0.8,
+      "grading": { "exposure": 1.0, "contrast": 1.08, "saturation": 0.95, "tint": "#e8f4ff", "shadows": "#101a30", "highlights": "#f0faff", "vignette": 0.35 },
+      "weather": "snow", "weatherIntensity": 1.0,
+      "backdrop": "mountains", "backdropColor": "#8a9aac", "footstep": "snow",
+      "props": [
+        { "kind": "iceCrystal", "count": 10, "ring": 18.5, "jitter": 2, "seed": 2, "scale": 1.2 },
+        { "kind": "pillar", "count": 8, "ring": 20, "seed": 4, "color": "#9ab0c4", "broken": 0.35 },
+        { "kind": "statue", "count": 2, "ring": 22, "seed": 6, "angleOffset": 90, "arc": 180 },
+        { "kind": "brazier", "count": 4, "ring": 16.5, "seed": 8, "color": "#7ac8ff", "angleOffset": 45 }
+      ],
+      "shifts": { "frost": { "sunColor": "#8ad0ff", "fogColor": "#c0e0ff", "fogDensity": 0.035, "tint": "#e0f0ff" } },
+      "music": { "tempo": 100, "root": 42, "mode": "aeolian", "drums": "sparse", "pad": "glass", "lead": "bell" }
+    },
+    {
+      "id": "hollow_court", "name": "The Hollow Court", "radius": 14,
+      "floor": "marble", "floorColor": "#d8d0c4", "floorColor2": "#2a2228", "floorRoughness": 0.15, "wet": 0.85,
+      "sky": "night", "sunDir": [-0.3, 0.6, 0.5], "sunColor": "#9aa8ff", "sunIntensity": 1.2, "ambient": 0.4, "ambientColor": "#9a8aff",
+      "fogColor": "#2a2438", "fogDensity": 0.02, "fogHeight": 8, "fogScatter": 0.4,
+      "rimColor": "#ffd8a0", "rimIntensity": 0.7,
+      "grading": { "exposure": 1.15, "contrast": 1.1, "saturation": 1.0, "tint": "#f4ecff", "shadows": "#1a1030", "highlights": "#ffe8c0", "vignette": 0.45 },
+      "weather": "dust", "weatherIntensity": 0.5,
+      "backdrop": "city", "backdropColor": "#2a2634", "footstep": "stone",
+      "props": [
+        { "kind": "statue", "count": 6, "ring": 18.5, "seed": 3, "broken": 0.2 },
+        { "kind": "brazier", "count": 8, "ring": 16.2, "seed": 5, "light": true, "color": "#ffc070", "angleOffset": 22 },
+        { "kind": "arch", "count": 4, "ring": 21, "seed": 7, "angleOffset": 45, "broken": 0.0 },
+        { "kind": "pillar", "count": 12, "ring": 23, "seed": 9, "color": "#cfc6ba", "material": "marble", "broken": 0.1 }
+      ],
+      "shifts": { "dark": { "sunIntensity": 0.6, "fogColor": "#140e20", "tint": "#e8d8ff" }, "red": { "sunColor": "#ff4a6a", "fogColor": "#3a1020" } },
+      "music": { "tempo": 116, "root": 50, "mode": "harmonicMinor", "drums": "march", "pad": "strings", "lead": "pluck" }
+    },
+    {
+      "id": "storm_peaks", "name": "The Storm Peaks", "radius": 15,
+      "floor": "rock", "floorColor": "#5a5c62", "floorColor2": "#34363c", "floorRoughness": 0.7, "wet": 0.5,
+      "sky": "storm", "sunDir": [0.2, 0.45, -0.8], "sunColor": "#c0d0ff", "sunIntensity": 1.8, "ambient": 0.5, "ambientColor": "#8a9ac8",
+      "fogColor": "#5a6078", "fogDensity": 0.024, "fogHeight": 10, "fogScatter": 0.35,
+      "rimColor": "#bfd0ff", "rimIntensity": 0.8,
+      "grading": { "exposure": 1.1, "contrast": 1.15, "saturation": 0.9, "tint": "#eef0ff", "shadows": "#101428", "highlights": "#e0e8ff", "vignette": 0.4 },
+      "weather": "rain", "weatherIntensity": 0.7, "lightning": true,
+      "backdrop": "mountains", "backdropColor": "#3c4050", "footstep": "stone",
+      "props": [
+        { "kind": "boulder", "count": 8, "ring": 19, "jitter": 3, "seed": 2 },
+        { "kind": "obelisk", "count": 4, "ring": 17.5, "seed": 4, "color": "#8ac8ff", "angleOffset": 45 },
+        { "kind": "brokenWall", "count": 4, "ring": 21, "seed": 6, "broken": 0.8 },
+        { "kind": "banner", "count": 4, "ring": 22, "seed": 8, "color": "#2a3a7a" }
+      ],
+      "shifts": { "storm": { "sunColor": "#9ac0ff", "sunIntensity": 2.5, "fogColor": "#3a4060", "tint": "#e0e8ff" } },
+      "music": { "tempo": 132, "root": 43, "mode": "dorian", "drums": "war", "pad": "choir", "lead": "brass" }
+    },
+    {
+      "id": "eclipse_sanctum", "name": "The Eclipse Sanctum", "radius": 14,
+      "floor": "obsidian", "floorColor": "#141018", "floorColor2": "#6a3aff", "floorRoughness": 0.08, "wet": 1.0,
+      "sky": "eclipse", "sunDir": [0.0, 0.5, 0.86], "sunColor": "#b08aff", "sunIntensity": 1.5, "ambient": 0.3, "ambientColor": "#8a6aff",
+      "fogColor": "#2a1a44", "fogDensity": 0.03, "fogHeight": 6, "fogScatter": 0.7,
+      "rimColor": "#c89aff", "rimIntensity": 1.0,
+      "grading": { "exposure": 1.2, "contrast": 1.12, "saturation": 1.1, "tint": "#f0e8ff", "shadows": "#10081a", "highlights": "#f0d8ff", "vignette": 0.5, "bloom": 1.25 },
+      "weather": "spores", "weatherIntensity": 1.0,
+      "backdrop": "void", "backdropColor": "#100c18", "footstep": "stone",
+      "props": [
+        { "kind": "obelisk", "count": 6, "ring": 17.5, "seed": 3, "color": "#8a4aff" },
+        { "kind": "crystal", "count": 6, "ring": 19.5, "jitter": 2, "seed": 5, "color": "#6a3aff", "angleOffset": 30 },
+        { "kind": "arch", "count": 3, "ring": 21, "seed": 7, "color": "#2a2432", "broken": 0.3 }
+      ],
+      "shifts": { "void": { "sunColor": "#6a2aff", "sunIntensity": 0.9, "fogColor": "#1a0830", "tint": "#e0d0ff" } },
+      "music": { "tempo": 110, "root": 41, "mode": "locrian", "drums": "tribal", "pad": "choir", "lead": "bell" }
+    },
+    {
+      "id": "throne_of_blades", "name": "The Throne of Blades", "radius": 16,
+      "floor": "marble", "floorColor": "#3a2a2a", "floorColor2": "#8a6a3a", "floorRoughness": 0.3, "wet": 0.6,
+      "sky": "bloodmoon", "sunDir": [0.0, 0.3, 0.95], "sunColor": "#ff5a4a", "sunIntensity": 2.4, "ambient": 0.4, "ambientColor": "#ff8a7a",
+      "fogColor": "#4a1818", "fogDensity": 0.022, "fogHeight": 8, "fogScatter": 0.7,
+      "rimColor": "#ffb080", "rimIntensity": 0.9,
+      "grading": { "exposure": 1.1, "contrast": 1.14, "saturation": 1.05, "tint": "#fff0e8", "shadows": "#200808", "highlights": "#ffe0c0", "vignette": 0.45, "bloom": 1.1 },
+      "weather": "ash", "weatherIntensity": 1.0,
+      "backdrop": "spires", "backdropColor": "#2a1818", "footstep": "stone",
+      "props": [
+        { "kind": "throne", "count": 1, "ring": 22, "seed": 1, "angleOffset": 180, "color": "#4a3a34" },
+        { "kind": "swordGrave", "count": 10, "ring": 18.5, "jitter": 1.5, "seed": 3 },
+        { "kind": "brazier", "count": 6, "ring": 17, "seed": 5, "light": true, "color": "#ff7040", "angleOffset": 30 },
+        { "kind": "bones", "count": 10, "ring": 17.8, "jitter": 2.5, "seed": 7 },
+        { "kind": "pillar", "count": 8, "ring": 24, "seed": 9, "color": "#5a4640", "broken": 0.5 }
+      ],
+      "shifts": { "red": { "sunColor": "#ff2a1a", "fogColor": "#5a0a0a", "tint": "#ffd0c0" }, "dark": { "sunIntensity": 1.2, "fogColor": "#200808" } },
+      "music": { "tempo": 128, "root": 40, "mode": "harmonicMinor", "drums": "war", "pad": "choir", "lead": "brass" }
+    },
+    {
+      "id": "sovereign_void", "name": "The Sovereign's Void", "radius": 16,
+      "floor": "obsidian", "floorColor": "#0e0c12", "floorColor2": "#ffd070", "floorRoughness": 0.05, "wet": 1.0,
+      "sky": "void", "sunDir": [0.3, 0.6, 0.7], "sunColor": "#ffe8c0", "sunIntensity": 2.0, "ambient": 0.35, "ambientColor": "#b8a0ff",
+      "fogColor": "#1a1428", "fogDensity": 0.018, "fogHeight": 5, "fogScatter": 0.9,
+      "rimColor": "#fff0c8", "rimIntensity": 1.1,
+      "grading": { "exposure": 1.15, "contrast": 1.15, "saturation": 1.05, "tint": "#fff8f0", "shadows": "#100a1a", "highlights": "#fff0d0", "vignette": 0.5, "bloom": 1.3 },
+      "weather": "sparks", "weatherIntensity": 0.8,
+      "backdrop": "void", "backdropColor": "#0a0810", "footstep": "stone",
+      "props": [
+        { "kind": "obelisk", "count": 5, "ring": 19, "seed": 2, "color": "#ffd070" },
+        { "kind": "swordGrave", "count": 5, "ring": 18, "seed": 4, "angleOffset": 36 },
+        { "kind": "crystal", "count": 5, "ring": 21, "seed": 6, "color": "#ffd070", "angleOffset": 18 }
+      ],
+      "shifts": {
+        "red": { "sunColor": "#ff4a3a", "fogColor": "#3a0a10", "tint": "#ffd8d0", "sky": "bloodmoon" },
+        "void": { "sunColor": "#8a5aff", "fogColor": "#140a28", "tint": "#e8d8ff", "sky": "eclipse" },
+        "dark": { "sunIntensity": 0.8, "fogColor": "#050408" }
+      },
+      "music": { "tempo": 140, "root": 38, "mode": "phrygian", "drums": "war", "pad": "choir", "lead": "brass" }
+    }
+  ]
+}

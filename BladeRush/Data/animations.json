@@ -1,0 +1,245 @@
+// BLADE RUSH animation library (hot reloaded).
+//
+// Poses are IK targets, not bone angles. Coordinates are RUF meters for a 1.8 m body:
+//   x = character's RIGHT, y = UP, z = FORWARD.
+//   hand / handL: weapon-hand targets relative to the chest (midpoint between shoulders),
+//                 rotating with the torso. Shoulders sit at x = +/-0.17. Arm reach ~0.6.
+//   blade / bladeL: direction the held weapon points (torso-relative).
+//   footL / footR: ground positions relative to the character root.
+//   yaw: + turns the torso right. pitch: + leans forward. roll: + leans right.
+//   crouch: meters the pelvis drops. left: free | grip | guard | shield | weapon.
+// Each strike has keys w (windup), i (impact, mid-swing), s (end of swing), f (follow-through).
+// Timing comes from each attack's frame data (startup / active / recovery).
+{
+  "stances": {
+    "default":  { "hand": [0.18, -0.38, 0.32], "blade": [-0.1, 0.55, 0.85], "handL": [-0.25, -0.42, 0.05], "bladeL": [0, 0.2, 1],
+                  "left": "free", "yaw": 12, "pitch": 5, "crouch": 0.06, "footL": [-0.13, 0, 0.14], "footR": [0.15, 0, -0.14] },
+    "oneHand":  { },
+    "twoHand":  { "hand": [0.03, -0.4, 0.34], "blade": [-0.05, 0.6, 0.8], "left": "grip", "yaw": 5, "crouch": 0.07,
+                  "footL": [-0.12, 0, 0.18], "footR": [0.15, 0, -0.16] },
+    "polearm":  { "hand": [0.06, -0.4, 0.1], "blade": [-0.3, 0.22, 1], "left": "grip", "yaw": 20, "crouch": 0.08,
+                  "footL": [-0.12, 0, 0.22], "footR": [0.16, 0, -0.18] },
+    "dual":     { "hand": [0.2, -0.3, 0.3], "blade": [0.1, 0.35, 1], "handL": [-0.2, -0.3, 0.3], "bladeL": [-0.1, 0.35, 1],
+                  "left": "weapon", "yaw": 0, "pitch": 12, "crouch": 0.13, "footL": [-0.17, 0, 0.12], "footR": [0.18, 0, -0.12] },
+    "shield":   { "hand": [0.24, -0.34, 0.18], "blade": [0.05, 0.6, 0.8], "handL": [-0.12, -0.18, 0.36], "bladeL": [0, 0.3, 1],
+                  "left": "shield", "yaw": -5, "crouch": 0.08 },
+    "flexible": { "hand": [0.2, -0.34, 0.26], "blade": [0.05, 0.5, 0.85], "handL": [-0.2, -0.32, 0.24], "bladeL": [-0.1, -0.6, 0.6],
+                  "left": "weapon", "crouch": 0.09 }
+  },
+
+  "strikes": {
+    "slash_h": {
+      "default": {
+        "w": { "hand": [0.5, 0.0, -0.12], "blade": [0.8, 0.15, -0.55], "yaw": 45, "pitch": 0, "crouch": 0.08, "footL": [-0.14, 0, 0.2], "footR": [0.18, 0, -0.18] },
+        "i": { "hand": [0.05, -0.12, 0.55], "blade": [-0.3, 0.05, 1], "yaw": 0, "pitch": 10 },
+        "s": { "hand": [-0.28, -0.15, 0.38], "blade": [-1, -0.05, 0.3], "yaw": -35, "pitch": 10 },
+        "f": { "hand": [-0.3, -0.3, 0.2], "blade": [-0.8, -0.3, -0.4], "yaw": -42, "pitch": 12 }
+      },
+      "twoHand": {
+        "w": { "hand": [0.38, 0.05, -0.02], "blade": [0.75, 0.2, -0.6], "yaw": 50, "crouch": 0.1, "footL": [-0.14, 0, 0.22], "footR": [0.18, 0, -0.2] },
+        "i": { "hand": [0.02, -0.15, 0.5], "blade": [-0.35, 0.05, 1], "yaw": 0, "pitch": 10 },
+        "s": { "hand": [-0.2, -0.18, 0.4], "blade": [-1, -0.08, 0.2], "yaw": -40, "pitch": 12 },
+        "f": { "hand": [-0.2, -0.32, 0.25], "blade": [-0.8, -0.35, -0.45], "yaw": -48, "pitch": 14 }
+      },
+      "polearm": {
+        "w": { "hand": [0.3, -0.2, -0.1], "blade": [0.9, 0.15, -0.3], "yaw": 55, "crouch": 0.12 },
+        "i": { "hand": [0.05, -0.25, 0.35], "blade": [-0.2, 0.05, 1], "yaw": 0, "pitch": 10 },
+        "s": { "hand": [-0.1, -0.25, 0.35], "blade": [-1, 0.0, 0.15], "yaw": -45, "pitch": 12 },
+        "f": { "hand": [-0.1, -0.35, 0.25], "blade": [-0.8, -0.2, -0.5], "yaw": -50, "pitch": 12 }
+      }
+    },
+    "slash_hb": {
+      "default": {
+        "w": { "hand": [-0.28, -0.02, 0.3], "blade": [-0.9, 0.1, -0.3], "yaw": -40, "pitch": 5, "crouch": 0.08 },
+        "i": { "hand": [0.1, -0.1, 0.55], "blade": [0.3, 0.05, 1], "yaw": 0, "pitch": 8 },
+        "s": { "hand": [0.5, -0.1, 0.2], "blade": [1, 0, -0.2], "yaw": 40, "pitch": 6 },
+        "f": { "hand": [0.5, -0.25, -0.02], "blade": [0.7, -0.3, -0.6], "yaw": 45, "pitch": 8 }
+      },
+      "twoHand": {
+        "w": { "hand": [-0.22, 0.0, 0.3], "blade": [-0.9, 0.15, -0.35], "yaw": -45, "crouch": 0.1 },
+        "i": { "hand": [0.05, -0.12, 0.5], "blade": [0.35, 0.05, 1], "yaw": 0, "pitch": 8 },
+        "s": { "hand": [0.35, -0.12, 0.28], "blade": [1, 0, -0.15], "yaw": 45, "pitch": 6 },
+        "f": { "hand": [0.35, -0.28, 0.1], "blade": [0.7, -0.35, -0.6], "yaw": 50, "pitch": 8 }
+      }
+    },
+    "overhead": {
+      "default": {
+        "w": { "hand": [0.15, 0.4, -0.05], "blade": [0.05, 0.4, -1], "yaw": 10, "pitch": -12, "crouch": 0.04, "footL": [-0.14, 0, 0.22], "footR": [0.16, 0, -0.2] },
+        "i": { "hand": [0.05, 0.05, 0.5], "blade": [0, 0.35, 1], "yaw": 0, "pitch": 8 },
+        "s": { "hand": [0.05, -0.35, 0.42], "blade": [0, -0.55, 0.8], "yaw": -3, "pitch": 22, "crouch": 0.12 },
+        "f": { "hand": [0.1, -0.45, 0.3], "blade": [0.1, -0.85, 0.3], "pitch": 26, "crouch": 0.15 }
+      },
+      "twoHand": {
+        "w": { "hand": [0.05, 0.42, 0.0], "blade": [0.0, 0.45, -1], "yaw": 5, "pitch": -14, "crouch": 0.05, "footL": [-0.13, 0, 0.24], "footR": [0.16, 0, -0.2] },
+        "i": { "hand": [0.02, 0.05, 0.48], "blade": [0, 0.35, 1], "pitch": 8 },
+        "s": { "hand": [0.02, -0.35, 0.4], "blade": [0, -0.6, 0.8], "pitch": 25, "crouch": 0.14 },
+        "f": { "hand": [0.02, -0.45, 0.3], "blade": [0, -0.9, 0.3], "pitch": 28, "crouch": 0.17 }
+      },
+      "polearm": {
+        "w": { "hand": [0.1, 0.3, -0.1], "blade": [-0.1, 0.9, -0.4], "yaw": 15, "pitch": -12 },
+        "i": { "hand": [0.05, 0.0, 0.3], "blade": [-0.1, 0.3, 1], "pitch": 10 },
+        "s": { "hand": [0.05, -0.3, 0.3], "blade": [-0.05, -0.45, 1], "pitch": 25, "crouch": 0.14 },
+        "f": { "hand": [0.05, -0.35, 0.25], "blade": [0, -0.7, 0.7], "pitch": 25, "crouch": 0.15 }
+      }
+    },
+    "diag": {
+      "default": {
+        "w": { "hand": [0.4, 0.3, -0.05], "blade": [0.6, 0.7, -0.4], "yaw": 35, "pitch": -5, "crouch": 0.06 },
+        "i": { "hand": [0.05, 0.0, 0.5], "blade": [-0.35, 0.3, 1], "yaw": 0, "pitch": 10 },
+        "s": { "hand": [-0.25, -0.3, 0.4], "blade": [-0.8, -0.5, 0.3], "yaw": -30, "pitch": 15, "crouch": 0.1 },
+        "f": { "hand": [-0.3, -0.4, 0.2], "blade": [-0.6, -0.7, -0.3], "yaw": -35, "pitch": 18, "crouch": 0.11 }
+      },
+      "twoHand": {
+        "w": { "hand": [0.3, 0.32, 0.0], "blade": [0.55, 0.7, -0.45], "yaw": 38, "pitch": -6, "crouch": 0.06 },
+        "i": { "hand": [0.02, 0.0, 0.48], "blade": [-0.35, 0.3, 1], "pitch": 10 },
+        "s": { "hand": [-0.18, -0.3, 0.38], "blade": [-0.8, -0.55, 0.25], "yaw": -32, "pitch": 16, "crouch": 0.11 },
+        "f": { "hand": [-0.2, -0.4, 0.22], "blade": [-0.6, -0.75, -0.3], "yaw": -38, "pitch": 18, "crouch": 0.12 }
+      }
+    },
+    "rising": {
+      "default": {
+        "w": { "hand": [-0.25, -0.4, 0.25], "blade": [-0.6, -0.6, -0.3], "yaw": -30, "pitch": 15, "crouch": 0.14 },
+        "i": { "hand": [0.05, -0.1, 0.5], "blade": [0.2, 0.3, 1], "yaw": 0, "pitch": 5 },
+        "s": { "hand": [0.3, 0.3, 0.25], "blade": [0.4, 1, 0.2], "yaw": 25, "pitch": -10, "crouch": 0.02 },
+        "f": { "hand": [0.3, 0.4, 0.1], "blade": [0.3, 1, -0.3], "yaw": 30, "pitch": -12, "crouch": 0.02 }
+      }
+    },
+    "thrust": {
+      "default": {
+        "w": { "hand": [0.28, -0.2, -0.12], "blade": [0.0, 0.1, 1], "yaw": 30, "crouch": 0.12, "footL": [-0.14, 0, 0.28], "footR": [0.18, 0, -0.25] },
+        "i": { "hand": [0.1, -0.1, 0.52], "blade": [-0.05, 0.05, 1], "yaw": -5, "pitch": 12, "crouch": 0.15 },
+        "s": { "hand": [0.05, -0.08, 0.6], "blade": [-0.05, 0.02, 1], "yaw": -10, "pitch": 15, "crouch": 0.17, "footL": [-0.14, 0, 0.4] },
+        "f": { "hand": [0.1, -0.15, 0.45], "blade": [-0.05, 0.05, 1], "yaw": -5, "pitch": 12, "crouch": 0.14 }
+      },
+      "polearm": {
+        "w": { "hand": [0.22, -0.3, -0.22], "blade": [-0.3, 0.12, 1], "yaw": 35, "crouch": 0.12, "footL": [-0.12, 0, 0.3], "footR": [0.18, 0, -0.25] },
+        "i": { "hand": [0.02, -0.22, 0.3], "blade": [-0.12, 0.05, 1], "yaw": 10, "pitch": 14, "crouch": 0.16 },
+        "s": { "hand": [-0.05, -0.2, 0.45], "blade": [-0.08, 0.02, 1], "yaw": 5, "pitch": 18, "crouch": 0.18, "footL": [-0.12, 0, 0.42] },
+        "f": { "hand": [0.05, -0.25, 0.3], "blade": [-0.15, 0.05, 1], "yaw": 12, "pitch": 12, "crouch": 0.14 }
+      }
+    },
+    "stab": {
+      "default": {
+        "w": { "hand": [0.25, -0.25, 0.05], "blade": [0.05, 0.05, 1], "yaw": 15, "crouch": 0.1 },
+        "i": { "hand": [0.06, -0.14, 0.5], "blade": [-0.05, 0.02, 1], "yaw": -5, "pitch": 10 },
+        "s": { "hand": [0.05, -0.14, 0.56], "blade": [-0.05, 0, 1], "yaw": -8, "pitch": 12 },
+        "f": { "hand": [0.2, -0.24, 0.3], "blade": [0.05, 0.1, 1], "yaw": 5, "pitch": 8 }
+      }
+    },
+    "low_sweep": {
+      "default": {
+        "w": { "hand": [0.42, -0.3, -0.1], "blade": [0.7, -0.5, -0.5], "yaw": 45, "pitch": 25, "crouch": 0.28, "footL": [-0.2, 0, 0.2], "footR": [0.22, 0, -0.2] },
+        "i": { "hand": [0.05, -0.45, 0.4], "blade": [-0.2, -0.35, 1], "yaw": 0, "pitch": 35, "crouch": 0.32 },
+        "s": { "hand": [-0.3, -0.42, 0.3], "blade": [-1, -0.4, 0.3], "yaw": -40, "pitch": 30, "crouch": 0.3 },
+        "f": { "hand": [-0.32, -0.4, 0.12], "blade": [-0.8, -0.4, -0.4], "yaw": -45, "pitch": 26, "crouch": 0.25 }
+      }
+    },
+    "spin": {
+      "default": {
+        "w": { "hand": [0.45, -0.05, 0.0], "blade": [1, 0.05, 0.1], "yaw": 35, "pitch": 5, "crouch": 0.14 },
+        "i": { "hand": [0.48, -0.1, 0.12], "blade": [1, 0, 0.25], "yaw": 5, "pitch": 8, "crouch": 0.16 },
+        "s": { "hand": [0.45, -0.12, 0.15], "blade": [1, -0.05, 0.3], "yaw": 0, "pitch": 8, "crouch": 0.15 },
+        "f": { "hand": [-0.2, -0.3, 0.3], "blade": [-0.8, -0.3, -0.3], "yaw": -30, "pitch": 10, "crouch": 0.1 }
+      },
+      "twoHand": {
+        "w": { "hand": [0.35, -0.05, 0.05], "blade": [1, 0.05, 0.1], "yaw": 40, "crouch": 0.14 },
+        "i": { "hand": [0.3, -0.12, 0.2], "blade": [1, 0, 0.3], "yaw": 10, "crouch": 0.16 },
+        "s": { "hand": [0.28, -0.12, 0.22], "blade": [1, -0.05, 0.35], "yaw": 5, "crouch": 0.15 },
+        "f": { "hand": [-0.15, -0.3, 0.3], "blade": [-0.8, -0.3, -0.3], "yaw": -30, "crouch": 0.1 }
+      }
+    },
+    "slam": {
+      "default": {
+        "w": { "hand": [0.1, 0.45, -0.05], "blade": [0.0, 0.5, -1], "yaw": 5, "pitch": -18, "crouch": 0.18 },
+        "i": { "hand": [0.05, 0.05, 0.5], "blade": [0, 0.3, 1], "pitch": 10, "crouch": 0.05 },
+        "s": { "hand": [0.05, -0.5, 0.35], "blade": [0, -0.9, 0.4], "pitch": 35, "crouch": 0.32, "footL": [-0.16, 0, 0.28], "footR": [0.18, 0, -0.22] },
+        "f": { "hand": [0.05, -0.5, 0.32], "blade": [0, -0.95, 0.3], "pitch": 36, "crouch": 0.34 }
+      }
+    },
+    "bash": {
+      "default": {
+        "w": { "handL": [-0.25, -0.15, 0.1], "yaw": 20, "crouch": 0.1 },
+        "i": { "handL": [-0.05, -0.05, 0.55], "yaw": -25, "pitch": 12, "crouch": 0.14 },
+        "s": { "handL": [-0.05, -0.05, 0.58], "yaw": -30, "pitch": 14, "crouch": 0.14, "footL": [-0.14, 0, 0.35] },
+        "f": { "handL": [-0.15, -0.15, 0.35], "yaw": -10, "pitch": 8 }
+      }
+    },
+    "grab": {
+      "default": {
+        "w": { "hand": [0.35, 0.1, -0.1], "blade": [0.5, 0.5, -0.5], "yaw": 30, "crouch": 0.1 },
+        "i": { "hand": [0.0, -0.05, 0.55], "blade": [-0.3, -0.2, 1], "yaw": -5, "pitch": 12 },
+        "s": { "hand": [0.05, -0.05, 0.55], "blade": [-0.5, -0.5, 0.7], "yaw": -8, "pitch": 14 },
+        "f": { "hand": [0.3, -0.2, 0.1], "blade": [0.3, -0.6, 0.5], "yaw": 20, "pitch": 5 }
+      }
+    },
+    "chain_swing": {
+      "default": {
+        "w": { "hand": [0.3, 0.3, -0.1], "blade": [1, 0.3, -0.5], "yaw": 30, "crouch": 0.08 },
+        "i": { "hand": [0.1, 0.22, 0.35], "blade": [0.3, 0.1, 1], "yaw": 0, "pitch": 5 },
+        "s": { "hand": [-0.2, 0.12, 0.3], "blade": [-1, 0, 0.3], "yaw": -30, "pitch": 6 },
+        "f": { "hand": [-0.2, -0.05, 0.2], "blade": [-0.7, -0.3, -0.5], "yaw": -35, "pitch": 6 }
+      }
+    },
+    "chain_throw": {
+      "default": {
+        "w": { "hand": [0.3, 0.35, -0.12], "blade": [0.3, 0.5, -1], "yaw": 25, "pitch": -8 },
+        "i": { "hand": [0.1, 0.1, 0.5], "blade": [0, 0.1, 1], "yaw": 0, "pitch": 8 },
+        "s": { "hand": [0.05, 0.0, 0.55], "blade": [0, 0, 1], "yaw": -5, "pitch": 10 },
+        "f": { "hand": [0.15, -0.1, 0.35], "blade": [0.1, 0.05, 1], "yaw": 5, "pitch": 5 }
+      }
+    },
+    "iaido": {
+      "default": {
+        "w": { "hand": [-0.2, -0.45, 0.15], "blade": [-0.6, -0.2, -0.8], "handL": [-0.25, -0.45, 0.1], "left": "free", "yaw": -30, "crouch": 0.22, "footL": [-0.2, 0, 0.26], "footR": [0.2, 0, -0.24] },
+        "i": { "hand": [0.1, -0.2, 0.55], "blade": [0.4, 0, 1], "yaw": 0, "pitch": 10, "crouch": 0.24 },
+        "s": { "hand": [0.5, -0.1, 0.25], "blade": [1, 0.05, -0.1], "yaw": 40, "pitch": 8, "crouch": 0.22 },
+        "f": { "hand": [0.5, -0.2, 0.05], "blade": [0.7, -0.3, -0.6], "yaw": 45, "pitch": 6, "crouch": 0.2 }
+      }
+    },
+    "vault": {
+      "default": {
+        "w": { "hand": [0.1, -0.2, 0.1], "blade": [0, -1, 0.4], "pitch": 15, "crouch": 0.2 },
+        "i": { "hand": [0.1, 0.35, 0.1], "blade": [0.0, -0.8, 0.5], "pitch": -10, "crouch": 0.0 },
+        "s": { "hand": [0.05, -0.3, 0.45], "blade": [0, -0.9, 0.4], "pitch": 30, "crouch": 0.3 },
+        "f": { "hand": [0.1, -0.4, 0.3], "blade": [0, -0.9, 0.3], "pitch": 28, "crouch": 0.28 }
+      }
+    }
+  },
+
+  "poses": {
+    "parry": {
+      "default":  { "hand": [0.02, 0.05, 0.35], "blade": [-0.75, 0.55, 0.3], "yaw": -8, "crouch": 0.1 },
+      "twoHand":  { "hand": [0.0, 0.0, 0.38], "blade": [-0.8, 0.5, 0.2], "crouch": 0.1 },
+      "polearm":  { "hand": [0.15, -0.1, 0.25], "blade": [-0.85, 0.5, 0.3], "yaw": 5, "crouch": 0.1 },
+      "dual":     { "hand": [0.1, -0.05, 0.35], "blade": [-0.5, 0.8, 0.2], "handL": [-0.1, -0.05, 0.35], "bladeL": [0.5, 0.8, 0.2], "crouch": 0.12 },
+      "shield":   { "handL": [-0.02, 0.0, 0.42], "crouch": 0.1 }
+    },
+    "block": {
+      "default":  { "hand": [0.04, 0.0, 0.32], "blade": [-0.8, 0.5, 0.25], "yaw": -5, "crouch": 0.16, "pitch": 8 },
+      "twoHand":  { "hand": [0.0, -0.05, 0.34], "blade": [-0.85, 0.45, 0.2], "crouch": 0.16, "pitch": 8 },
+      "dual":     { "hand": [0.08, -0.05, 0.32], "blade": [-0.5, 0.8, 0.2], "handL": [-0.08, -0.05, 0.32], "bladeL": [0.5, 0.8, 0.2], "crouch": 0.16 },
+      "shield":   { "handL": [-0.02, -0.05, 0.4], "crouch": 0.17, "pitch": 10 }
+    },
+    "dodge_f": { "default": { "hand": [0.25, -0.35, -0.05], "blade": [0.2, -0.3, -1], "handL": [-0.25, -0.35, -0.05], "pitch": 30, "crouch": 0.22 } },
+    "dodge_b": { "default": { "hand": [0.25, -0.2, 0.2], "blade": [0.1, 0.5, 0.8], "pitch": -10, "crouch": 0.16 } },
+    "dodge_l": { "default": { "hand": [0.25, -0.3, 0.1], "blade": [0.3, -0.2, -1], "roll": -18, "pitch": 12, "crouch": 0.2 } },
+    "dodge_r": { "default": { "hand": [0.3, -0.35, 0.0], "blade": [0.4, -0.2, -1], "roll": 18, "pitch": 12, "crouch": 0.2 } },
+    "stagger": { "default": { "hand": [0.35, -0.45, 0.0], "blade": [0.5, -0.8, 0.2], "handL": [-0.35, -0.4, 0.1], "left": "free", "pitch": -18, "crouch": 0.2, "headPitch": -15 } },
+    "kneel":   { "default": { "hand": [0.3, -0.55, 0.15], "blade": [0.3, -0.9, 0.3], "handL": [-0.3, -0.5, 0.2], "left": "free", "pitch": 28, "crouch": 0.48,
+                              "footL": [-0.14, 0, 0.32], "footR": [0.16, 0, -0.36], "headPitch": 20 } },
+    "heal":    { "default": { "handL": [-0.03, 0.14, 0.2], "left": "free", "headPitch": -18, "crouch": 0.05 } },
+    "hit":     { "default": { "pitch": -15, "headPitch": -10, "crouch": 0.1 } },
+    "dead":    { "default": { "hand": [0.4, 0.1, 0.1], "blade": [0.5, 0.2, 0.8], "handL": [-0.4, 0.1, 0.1], "left": "free", "bodyPitch": -86, "crouch": 0.18, "headPitch": -10 } },
+    "roar":    { "default": { "hand": [0.5, 0.25, 0.1], "blade": [0.4, 1, 0.1], "handL": [-0.5, 0.25, 0.1], "left": "free", "pitch": -20, "headPitch": -25, "crouch": 0.1 } },
+    "rest":    { "default": { "hand": [0.2, 0.05, 0.12], "blade": [0.1, 0.35, -1], "left": "free", "pitch": 0, "crouch": 0.02 } },
+    "grabbed": { "default": { "hand": [0.3, 0.1, 0.25], "blade": [0.3, -0.5, 0.7], "handL": [-0.3, 0.1, 0.25], "left": "free", "pitch": -12, "headPitch": -15, "crouch": 0.0 } },
+    "sheathe": { "default": { "hand": [0.35, -0.3, -0.2], "blade": [0.3, -0.2, -1], "yaw": 10, "crouch": 0.05 } },
+    "iaido_stance": { "default": { "hand": [-0.18, -0.4, 0.15], "blade": [-0.5, -0.2, -0.85], "handL": [-0.25, -0.42, 0.1], "left": "free", "yaw": -30, "crouch": 0.22,
+                                   "footL": [-0.2, 0, 0.25], "footR": [0.2, 0, -0.25] } },
+    "charge":  { "default": { "hand": [0.25, 0.25, -0.15], "blade": [0.3, 0.45, -1], "yaw": 25, "pitch": -8, "crouch": 0.14 },
+                 "twoHand": { "hand": [0.2, 0.3, -0.05], "blade": [0.2, 0.55, -1], "yaw": 20, "pitch": -10, "crouch": 0.15 } },
+    "run_charge": { "default": { "hand": [0.2, -0.2, 0.3], "blade": [0.0, 0.1, 1], "pitch": 25, "crouch": 0.14 } },
+    "deathblow": { "default": { "hand": [0.05, -0.1, 0.6], "blade": [-0.05, -0.1, 1], "yaw": -10, "pitch": 18, "crouch": 0.2, "footL": [-0.14, 0, 0.4], "footR": [0.18, 0, -0.26] } },
+    "taunt":   { "default": { "hand": [0.45, -0.1, 0.25], "blade": [0.8, 0.3, 0.4], "handL": [-0.3, -0.35, 0.15], "left": "free", "pitch": -5, "headPitch": -5 } }
+  }
+}
