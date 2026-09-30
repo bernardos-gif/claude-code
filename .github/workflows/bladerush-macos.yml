@@ -52,10 +52,14 @@ jobs:
           done
 
       - name: Package .app
-        run: Scripts/package.sh
+        run: |
+          Scripts/package.sh
+          # Zip with ditto: artifact uploads drop Unix permissions, so the executable bit and
+          # code signature only survive inside an archive.
+          ditto -c -k --sequesterRsrc --keepParent build/BladeRush.app build/BladeRush-macOS.zip
 
       - name: Upload app
         uses: actions/upload-artifact@v4
         with:
-          name: BladeRush.app
-          path: BladeRush/build/BladeRush.app
+          name: BladeRush-macOS
+          path: BladeRush/build/BladeRush-macOS.zip
